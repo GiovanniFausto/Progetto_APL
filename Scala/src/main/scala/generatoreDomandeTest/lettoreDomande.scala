@@ -2,7 +2,7 @@ package generatoreDomandeTest
 import util.Random
 import scala.collection.mutable._
 
-class lettoreDomande(var path:String) {
+class lettoreDomande(var path:String, var numDom:Int) {
 
   private val bufferedSource = io.Source.fromFile(path)//serve per leggere il file
   private var key = LinkedHashMap[String,String]()//serve per le key del file id categ ecc
@@ -28,7 +28,7 @@ class lettoreDomande(var path:String) {
     val h=domPerCateg
 
     while (j<Categ){
-      while (set1.size<10){ //genero 10 numeri random perchè voglio 10 dom per categoria
+      while (set1.size<numDom){ //genero 10 numeri random perchè voglio 10 dom per categoria
         var x=(Random.nextInt(99)+1+h*j) //lo faccio fino a quando ho tutti numeri diversi
         set1+=x //i numeri sono generati prima da 1 a 100 poi 101 a 200 ecc
       }
@@ -56,7 +56,7 @@ class lettoreDomande(var path:String) {
         val cols = line.split(";").map(_.trim) //quello che leggo lo mentto nelle colonne
         val l = cols.length
         for (i <- 0 until  l ) {
-          key += (cols(i)->"0")  //key.update(cols(i),"0")// LinkedHashMap((cols(i)->"0")) //la prima riga contiene solo le key
+          key += (cols(i)->"0")   //la prima riga contiene solo le key
         }
         inizio = inizio + 1
         lista=key::lista //le aggiungo alla lista
