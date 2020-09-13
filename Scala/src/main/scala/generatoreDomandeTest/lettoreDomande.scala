@@ -29,7 +29,7 @@ class lettoreDomande(var path:String, var numDom:Int) {
 
     while (j<Categ){
       while (set1.size<numDom){ //genero 10 numeri random perchè voglio 10 dom per categoria
-        var x=(Random.nextInt(99)+1+h*j) //lo faccio fino a quando ho tutti numeri diversi
+        var x=(Random.nextInt(h)+1+h*j) //lo faccio fino a quando ho tutti numeri diversi
         set1+=x //i numeri sono generati prima da 1 a 100 poi 101 a 200 ecc
       }
 

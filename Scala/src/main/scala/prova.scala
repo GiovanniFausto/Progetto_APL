@@ -1,15 +1,19 @@
+import java.io.{BufferedReader, InputStreamReader, PrintStream}
+import java.net.{InetAddress, Socket}
+
 import generatoreDomandeTest.lettoreDomande
 
 import scala.collection.mutable._
+import scala.io.BufferedSource
 import scala.util.Random._
 /*TODO da mandare nome cognome IdDomande PunteggiDomande RIposteSelezionate DomandeUscite*/
 
 
 object Hello extends App {
   var path="src/main/scala/questionario.csv"
-  var obj= new lettoreDomande(path=path,2)// il numero è per devidere quante domande per ogni categoria
+  var obj= new lettoreDomande(path=path,10)// il numero è per devidere quante domande per ogni categoria
   var lista=obj.listaDom
-  println(lista.size)
+  //println(lista)
   var IdDomande=List[Int]()//metto gli id delle domande
   var PunteggioDomande=List[Double]() //metto le risposte
   var RisposteSelezionate=List[String]()//metto le risposte scelte
@@ -67,5 +71,16 @@ object Hello extends App {
   println("DOMANDE USCITE:\t"+DomandeUscite)
   println("RISPOSTE SELEZIONATE:\t"+RisposteSelezionate)
   println("PUNTEGGIO RISPOSTE:\t"+PunteggioDomande)
+
+  //val socket = new Socket("localhost",9999)
+  val s = new Socket(InetAddress.getByName("localhost"), 9999)
+  val in = new BufferedSource(s.getInputStream).getLines()
+  val out = new PrintStream(s.getOutputStream)
+  out.println(nome,cognome,IdDomande,DomandeUscite,RisposteSelezionate,PunteggioDomande)
+  out.flush()
+  print("Received: " + in.next())
+  s.close()
+
+
 }
 
