@@ -8,7 +8,7 @@ import scala.io.BufferedSource
 import scala.util.Random._
 /*TODO da mandare nome cognome IdDomande PunteggiDomande RIposteSelezionate DomandeUscite*/
 
-
+ //prova git
 object Hello extends App {
   var path="src/main/scala/questionario.csv"
   var obj= new lettoreDomande(path=path,1)// il numero è per devidere quante domande per ogni categoria
