@@ -11,7 +11,7 @@ import scala.util.Random._
 
 object Hello extends App {
   var path="src/main/scala/questionario.csv"
-  var obj= new lettoreDomande(path=path,10)// il numero è per devidere quante domande per ogni categoria
+  var obj= new lettoreDomande(path=path,1)// il numero è per devidere quante domande per ogni categoria
   var lista=obj.listaDom
   //println(lista)
   var IdDomande=List[Int]()//metto gli id delle domande
@@ -73,13 +73,13 @@ object Hello extends App {
   println("PUNTEGGIO RISPOSTE:\t"+PunteggioDomande)
 
   //val socket = new Socket("localhost",9999)
-  val s = new Socket(InetAddress.getByName("localhost"), 9999)
+  /*val s = new Socket(InetAddress.getByName("localhost"), 9999)
   val in = new BufferedSource(s.getInputStream).getLines()
   val out = new PrintStream(s.getOutputStream)
   out.println(nome,cognome,IdDomande,DomandeUscite,RisposteSelezionate,PunteggioDomande)
   out.flush()
   print("Received: " + in.next())
-  s.close()
+  s.close()*/
 
 
 }
