@@ -16,7 +16,7 @@ app = Flask(__name__)
 blockchain = Blockchain()
 
 #creiamo gli endpoint
-
+# prova push py
 #http://localhost:8000/nuovaTransazione 
 # serve per creare una nuova transazione in un blocco
 @app.route('/nuovaTransazione', methods=['POST'])
