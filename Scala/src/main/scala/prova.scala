@@ -1,4 +1,4 @@
-import java.io.{BufferedReader, InputStreamReader, PrintStream}
+import java.io.PrintStream
 import java.net.{InetAddress, Socket}
 
 import generatoreDomandeTest.lettoreDomande
@@ -8,7 +8,7 @@ import scala.io.BufferedSource
 import scala.util.Random._
 /*TODO da mandare nome cognome IdDomande PunteggiDomande RIposteSelezionate DomandeUscite*/
 
- //prova git
+
 object Hello extends App {
   var path="src/main/scala/questionario.csv"
   var obj= new lettoreDomande(path=path,1)// il numero è per devidere quante domande per ogni categoria
@@ -72,14 +72,31 @@ object Hello extends App {
   println("RISPOSTE SELEZIONATE:\t"+RisposteSelezionate)
   println("PUNTEGGIO RISPOSTE:\t"+PunteggioDomande)
 
-  //val socket = new Socket("localhost",9999)
-  /*val s = new Socket(InetAddress.getByName("localhost"), 9999)
+  val msg=  "{"+
+    "\"Nome\": \""+ nome + "\", "+
+    "\"Cognome\": \""+ cognome + "\", "+
+    "\"IdDomande\": "+ IdDomande.toArray.mkString("[\"", "\", \"", "\"]") + ", "+
+    "\"DomandeUscite\": "+ DomandeUscite.toArray.mkString("[\"", "\", \"", "\"]")+ ", "+
+    "\"RisposteSelezionate\": "+ RisposteSelezionate.toArray.mkString("[\"", "\", \"", "\"]")+ ", "+
+    "\"PunteggioDomande\": "+ PunteggioDomande.toArray.mkString("[\"", "\", \"", "\"]")+ ""+
+  "}"
+  print(msg)
+
+  val s = new Socket(InetAddress.getByName("localhost"), 9999)
+
   val in = new BufferedSource(s.getInputStream).getLines()
   val out = new PrintStream(s.getOutputStream)
-  out.println(nome,cognome,IdDomande,DomandeUscite,RisposteSelezionate,PunteggioDomande)
+  /*out.println("Nome",nome,
+    "Cognome",cognome,
+    "IdDomande",IdDomande,
+    "DomandeUscite",DomandeUscite,
+    "RisposteSelezionate",RisposteSelezionate,
+    "PunteggioDomande",RisposteSelezionate)*/
+
+  out.println(msg)
   out.flush()
   print("Received: " + in.next())
-  s.close()*/
+  s.close()
 
 
 }

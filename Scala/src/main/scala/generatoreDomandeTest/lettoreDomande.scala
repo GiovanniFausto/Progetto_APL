@@ -53,7 +53,7 @@ class lettoreDomande(var path:String, var numDom:Int) {
   private def elaboradomande(): Unit = { //serve a leggere tutte le domande nel file
     for (line <- bufferedSource.getLines) {
       if (inizio == 0) { //controllo se sono alla prima riga
-        val cols = line.split(";").map(_.trim) //quello che leggo lo mentto nelle colonne
+        val cols = line.replace("\"","").split(";").map(_.trim) //quello che leggo lo mentto nelle colonne
         val l = cols.length
         for (i <- 0 until  l ) {
           key += (cols(i)->"0")   //la prima riga contiene solo le key
@@ -63,7 +63,7 @@ class lettoreDomande(var path:String, var numDom:Int) {
       }
       else {
         inizio = inizio + 1
-        val cols = line.split(";").map(_.trim) //come prima ma ora ci sono le domande
+        val cols = line.replace("\"","").split(";").map(_.trim) //come prima ma ora ci sono le domande
         val l = cols.length
         val s = key.keys.toSeq //prendo le key che mi servono per la mappa che sarà del tipo k->v
         for (i <- 0 until l ) {
