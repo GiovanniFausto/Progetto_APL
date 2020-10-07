@@ -75,12 +75,12 @@ object Hello extends App {
   val msg=  "{"+
     "\"Nome\": \""+ nome + "\", "+
     "\"Cognome\": \""+ cognome + "\", "+
-    "\"IdDomande\": \"" + IdDomande.toArray.mkString("[\'", "\', \'", "\']") + "\", "+
-    "\"DomandeUscite\": \""+ DomandeUscite.toArray.mkString("[\'", "\', \'", "\']") + "\", "+
-    "\"RisposteSelezionate\": \""+ RisposteSelezionate.toArray.mkString("[\'", "\', \'", "\']") + "\", "+
-    "\"PunteggioDomande\": \""+ PunteggioDomande.toArray.mkString("[\'", "\', \'", "\']") + "\""+
+    "\"IdDomande\": " + IdDomande.toArray.mkString("[", ", ", "]") + ", "+
+    "\"DomandeUscite\": "+ DomandeUscite.toArray.mkString("[\"", "\", \"", "\"]") + ", "+
+    "\"RisposteSelezionate\": "+ RisposteSelezionate.toArray.mkString("[\"", "\", \"", "\"]") + ", "+
+    "\"PunteggioDomande\": "+ PunteggioDomande.toArray.mkString("[", ", ", "]") +
   "}"
-  print(msg)
+  println(msg)
 
   val s = new Socket(InetAddress.getByName("localhost"), 9999)
 
@@ -95,7 +95,8 @@ object Hello extends App {
 
   out.println(msg)
   out.flush()
-  print("Received: " + in.next())
+  //println("Received: " + in.next())
+
   s.close()
 
 
