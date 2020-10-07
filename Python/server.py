@@ -5,6 +5,7 @@ from Blockchain import Blockchain
 #from flask_socketio import SocketIO
 #from flask_restful import Api
 import socket, ast
+import requests
 
 # creiamo delle interfacce per il nodo server.
 # usiamo Flask come framework per creare un'applicazione REST
@@ -22,8 +23,8 @@ blockchain = Blockchain()
 @app.route('/nuovaTransazione', methods=['POST'])
 def nuovaTransazione():
     datiTransazione = request.get_json()
-    richiesta = ["nome"] # transazione dell'utente in formato json
-
+    #richiesta = ["nome"] # transazione dell'utente in formato json
+    richiesta = ["Nome", "Cognome", "IdDomande", "DomandeUscite", "RisposteSelezionate", "PunteggioDomande"]
     for dati in richiesta:
         if not datiTransazione.get(dati):
             return "Dati mancanti", 404
@@ -67,23 +68,4 @@ def handle_message(message):
 ### manca la parte della decentralizzazione!! per inserire nuovi nodi nella rete.
 if __name__ == '__main__':
     app.run(port=8000)
-    #socketio.run(app, port=9999)  #Prova flask
     
-    HOST = ''                 # Nome simbolico che rappresenta il nodo locale
-    PORT = 9999              # Porta non privilegiata arbitraria 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((HOST, PORT))
-    s.listen(1)
-    conn, addr = s.accept()
-    print ('Connected by', addr)
-    while 1:
-        data = conn.recv(1024)
-        prova=data.decode("utf-8")
-        print(data.decode("utf-8"))
-        if not data: 
-            break
-        conn.send(data)
-
-    conn.close()
-
-    print((prova))
