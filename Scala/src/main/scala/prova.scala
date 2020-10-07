@@ -75,10 +75,10 @@ object Hello extends App {
   val msg=  "{"+
     "\"Nome\": \""+ nome + "\", "+
     "\"Cognome\": \""+ cognome + "\", "+
-    "\"IdDomande\": "+ IdDomande.toArray.mkString("[\"", "\", \"", "\"]") + ", "+
-    "\"DomandeUscite\": "+ DomandeUscite.toArray.mkString("[\"", "\", \"", "\"]")+ ", "+
-    "\"RisposteSelezionate\": "+ RisposteSelezionate.toArray.mkString("[\"", "\", \"", "\"]")+ ", "+
-    "\"PunteggioDomande\": "+ PunteggioDomande.toArray.mkString("[\"", "\", \"", "\"]")+ ""+
+    "\"IdDomande\": \"" + IdDomande.toArray.mkString("[\'", "\', \'", "\']") + "\", "+
+    "\"DomandeUscite\": \""+ DomandeUscite.toArray.mkString("[\'", "\', \'", "\']") + "\", "+
+    "\"RisposteSelezionate\": \""+ RisposteSelezionate.toArray.mkString("[\'", "\', \'", "\']") + "\", "+
+    "\"PunteggioDomande\": \""+ PunteggioDomande.toArray.mkString("[\'", "\', \'", "\']") + "\""+
   "}"
   print(msg)
 
