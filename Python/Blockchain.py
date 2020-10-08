@@ -1,7 +1,7 @@
 from hashlib import sha256
 import json
 import time
-
+from Block import Block
 
 class Blockchain:
 
@@ -12,30 +12,27 @@ class Blockchain:
     def __init__(self):
         self.transazioniUnconfirmed = []  # transazione da inserire in bc
         self.chain = []
-        self.block(0, [], time.time(), 0, '00') #creazione blocco genesi, che ha indice 0
-
-    # per aggiungere un nuovo blocco alla catena, dopo il blocco genesi
-    def block(self, indice, transazioni, timestamp, nonce, hashPrecedente):
-        newBlock = {'indice': len(self.chain) + 1,
-                'timestamp': time.time(),
-                'transazioni': self.transazioniUnconfirmed,
-                'nonce': nonce,
-                'hashPrecedente': hashPrecedente}
-        # resetta la lista delle transazioni
-        self.transazioniUnconfirmed = []
-
-        self.chain.append(newBlock)
-        return newBlock
-
-    # funzione che calcola l'hash
-    @staticmethod
-    def calcoloHash(block):
-            blockString = json.dumps(block, sort_keys=True).encode()          
-            computeHash = sha256(blockString)
-            return computeHash.hexdigest()
+        self.createGenesisBlock() #creazione blocco genesi, che ha indice 0
     
-    #serve dopo per sapere l'indice dell'ultimo blocco inserito, da usare per la creazione del nuovo blocco
-    #@property
+    def createGenesisBlock(self):
+        
+        genesisBlock = Block(0, [], time.time(), "0")
+        genesisBlock.hash = genesisBlock.calcoloHash()
+        self.chain.append(genesisBlock)
+    
+    #per estrarre un nuovo blocco, dopo il blocco genesi
+    def createBlock(self, block, proof):
+        
+        hashPrecedente = self.lastBlock.hash
+        #verifico se l'hash inizia con 00
+        if not self.validPoW(block, proof):
+            return False
+        block.hash = proof #associa l'hash corretto, verificato dal pow al blocco
+        self.transazioniUnconfirmed = [] #resetta la lista delle transazioni non confermate
+        self.chain.append(block)
+        return True
+
+    @property
     def lastBlock(self):
         return self.chain[-1]
     
@@ -43,28 +40,29 @@ class Blockchain:
     # incrementa il nonce di 1 finchè non ottiene un hash
     # che rispetta il criterio di difficoltà impostato (due zeri iniziali).
     #@staticmethod
-    def PoW(self, difficultyPoW = difficultyPoW):
+    def PoW(self, block):
         #print("DENTRO POW")
-        nonce = 0
-        ultimoBlocco = self.lastBlock()
-        hashBlock = self.calcoloHash(ultimoBlocco)
+        block.nonce = 0
         
-        while not self.validPoW(self.transazioniUnconfirmed, hashBlock, nonce):
-            nonce += 1
-        #return hashBlock
-        print("NONCE POW: ", nonce)
-        return nonce
+        hashBlock = block.calcoloHash()
+        print("HASH ULTIMO BLOCCO: ", hashBlock)
+        #while not self.validPoW(self.transazioniUnconfirmed, hashBlock, nonce):
+        while not hashBlock[:Blockchain.difficultyPoW] == '0' * Blockchain.difficultyPoW:
+            block.nonce += 1
+            hashBlock = block.calcoloHash()
+        
+        print("HASH CON 00 : ", hashBlock)
+        print("NONCE POW: ", block.nonce)
+        return hashBlock
     
     # verifico se hashBlock ha un hash valido per il blocco
     # il vincolo che deve soddisfare l'hash è che deve iniziare con due 0
     # ritorna True quando lo trova
-    def validPoW(self, transazioni, hashBlock, nonce, difficultyPoW = difficultyPoW):    
-        """return (hashBlock[:difficultyPoW] == ('0' * difficultyPoW) and
-                hashBlock == self.calcoloHash(block))"""
-        stringa = (str(transazioni)+str(hashBlock)+str(nonce)).encode() # non lo so a che serve, mi piacerebbe scoprirlo
-        #print("stringa: ", stringa)
-        stringaHash = sha256(stringa).hexdigest()
-        return stringaHash[:difficultyPoW] == '0' * difficultyPoW
+    #@classmethod
+    def validPoW(self, block, hashBlock):    
+        hashOk = (hashBlock[:Blockchain.difficultyPoW] == '0' * Blockchain.difficultyPoW)
+        #print("HASH OK: ", hashOk) 
+        return (hashOk and hashBlock == block.calcoloHash())
 
 #------Mining-----#
     # le transazioni create non sono ancora confermate, per cui non possono essere
@@ -80,15 +78,17 @@ class Blockchain:
         if not self.transazioniUnconfirmed:
             return False
         print("dentro mine")
-        ultimoBlocco = self.lastBlock()
-        indice = len(self.chain) + 1
+        ultimoBlocco = self.lastBlock
+        indice = len(self.chain)
         transazioni=self.transazioniUnconfirmed
         timestamp=time.time()
-        nonce = self.PoW()
-        hashPrecedente = self.calcoloHash(ultimoBlocco)
+        #nonce = self.PoW()
+        hashPrecedente = ultimoBlocco.hash
         #print("hash precedente: ", hashPrecedente)
         
-        nuovoBlocco = self.block(indice, transazioni, timestamp, nonce, hashPrecedente)
-        print("nuovo Blocco: ", nuovoBlocco)
+        nuovoBlocco = Block(indice, transazioni, timestamp, hashPrecedente)
+        proof = self.PoW(nuovoBlocco)
+        #nonce = self.PoW(nuovoBlocco)
+        self.createBlock(nuovoBlocco, proof)
         
-        return indice
+        return True

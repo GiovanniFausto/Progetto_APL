@@ -4,33 +4,29 @@ from flask import Flask, request
 from Blockchain import Blockchain
 #from flask_socketio import SocketIO
 #from flask_restful import Api
-import socket, ast
-import requests
+
 
 # creiamo delle interfacce per il nodo server.
 # usiamo Flask come framework per creare un'applicazione REST
 app = Flask(__name__)
-#api = Api(app)
-#socketio = SocketIO(app)
 
 # copia della bc per il nodo server
 blockchain = Blockchain()
 
 #creiamo gli endpoint
-# prova push py
+
 #http://localhost:8000/nuovaTransazione 
 # serve per creare una nuova transazione in un blocco
 @app.route('/nuovaTransazione', methods=['POST'])
 def nuovaTransazione():
     datiTransazione = request.get_json()
-    #richiesta = ["nome"] # transazione dell'utente in formato json
-    richiesta = ["Nome", "Cognome", "IdDomande", "DomandeUscite", "RisposteSelezionate", "PunteggioDomande"]
-    for dati in richiesta:
-        if not datiTransazione.get(dati):
-            return "Dati mancanti", 404
+    richiesta = ["nome"] # transazione dell'utente in formato json
+    #richiesta = ["Nome", "Cognome", "IdDomande", "DomandeUscite", "RisposteSelezionate", "PunteggioDomande"]
+    
+    if not all(k in datiTransazione for k in richiesta):
+        return "Dati mancanti nella richiesta", 404
 
     datiTransazione["timestamp"] = time.time()
-
     blockchain.aggiungiTransazione(datiTransazione) # per aggiungere la transazione
 
     return "Transazione creata con successo", 201
@@ -39,16 +35,17 @@ def nuovaTransazione():
 # per comunicare al server di estrarre un nuovo blocco
 @app.route('/mine', methods=['GET'])
 def mineTransazioniUnconfirmed():
-    numeroBlocco = blockchain.mine()
-    if numeroBlocco is False:
-        return "Nessuna transazione da estrarre"
-    return "Il blocco #{} è stato estratto.".format(numeroBlocco)
+    block = blockchain.mine()
+    if block is False:
+        return "Nessuna transazione da estrarre", 404
+    return "Il blocco {} è stato estratto.".format(blockchain.lastBlock.index)
 
 # http://localhost:8000/pending 
 # per verificare se ci sono altre transazioni non confermate
-@app.route('/pending')
+@app.route('/pending', methods=['GET'])
 def getPending():
-    return json.dumps(blockchain.transazioniUnconfirmed)
+    transazioni = blockchain.transazioniUnconfirmed
+    return json.dumps(transazioni), 200
 
 #http://localhost:8000/chain 
 # ci restituisce l’intera blockchain
@@ -56,14 +53,11 @@ def getPending():
 def getChain():
     chain = []
     for block in blockchain.chain:
-        chain.append(block)
+        chain.append(block.__dict__)
     dimChain = len(chain)
-    return json.dumps({"Lunghezza": dimChain,
-                       "Catena": chain})
+    res = {"Lunghezza": dimChain, "Catena": chain}
+    return json.dumps(res), 200
 
-'''@socketio.on('message')
-def handle_message(message):
-    print('received message: ' + message)'''
     
 ### manca la parte della decentralizzazione!! per inserire nuovi nodi nella rete.
 if __name__ == '__main__':
