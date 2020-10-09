@@ -2,8 +2,8 @@ import json
 import time
 from flask import Flask, request
 from Blockchain import Blockchain
-#from flask_socketio import SocketIO
-#from flask_restful import Api
+import csv
+import pandas as pd
 
 
 # creiamo delle interfacce per il nodo server.
@@ -20,14 +20,14 @@ blockchain = Blockchain()
 @app.route('/nuovaTransazione', methods=['POST'])
 def nuovaTransazione():
     datiTransazione = request.get_json()
-    richiesta = ["nome"] # transazione dell'utente in formato json
+    #richiesta = ["nome"] # transazione dell'utente in formato json
     #richiesta = ["Nome", "Cognome", "IdDomande", "DomandeUscite", "RisposteSelezionate", "PunteggioDomande"]
     
-    if not all(k in datiTransazione for k in richiesta):
-        return "Dati mancanti nella richiesta", 404
+    """if not all(k in datiTransazione for k in richiesta):
+        return "Dati mancanti nella richiesta", 404"""
 
     datiTransazione["timestamp"] = time.time()
-    blockchain.aggiungiTransazione(datiTransazione) # per aggiungere la transazione
+    blockchain.transazioniUnconfirmed.append(datiTransazione)# per aggiungere la transazione
 
     return "Transazione creata con successo", 201
 
@@ -62,4 +62,14 @@ def getChain():
 ### manca la parte della decentralizzazione!! per inserire nuovi nodi nella rete.
 if __name__ == '__main__':
     app.run(port=8000)
+    chainB = []
+
+    #salva la bc con tutti i blocchi di tutti i test fatti in un file csv
+    with open('bc.csv', 'w',) as csvfile:
+        writer = csv.writer(csvfile, delimiter=',')
+        for block in blockchain.chain:
+            chainB.append(block.__dict__)
+            writer.writerow(block.__dict__)
+        writer.writerow(chainB)
     
+    #print("CHAIN: ", chainB)

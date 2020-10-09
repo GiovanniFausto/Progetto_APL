@@ -10,7 +10,7 @@ class Blockchain:
 
     #costrutt bc
     def __init__(self):
-        self.transazioniUnconfirmed = []  # transazione da inserire in bc
+        self.transazioniUnconfirmed = [] # transazione da inserire in bc
         self.chain = []
         self.createGenesisBlock() #creazione blocco genesi, che ha indice 0
     
@@ -25,10 +25,10 @@ class Blockchain:
         
         hashPrecedente = self.lastBlock.hash
         #verifico se l'hash inizia con 00
-        if not self.validPoW(block, proof):
+        if not self.validPoW(proof):
             return False
         block.hash = proof #associa l'hash corretto, verificato dal pow al blocco
-        self.transazioniUnconfirmed = [] #resetta la lista delle transazioni non confermate
+        #self.transazioniUnconfirmed = [] #resetta la lista delle transazioni non confermate
         self.chain.append(block)
         return True
 
@@ -36,14 +36,12 @@ class Blockchain:
     def lastBlock(self):
         return self.chain[-1]
     
-    
     # incrementa il nonce di 1 finchè non ottiene un hash
     # che rispetta il criterio di difficoltà impostato (due zeri iniziali).
     #@staticmethod
     def PoW(self, block):
         #print("DENTRO POW")
-        block.nonce = 0
-        
+        block.nonce = 0       
         hashBlock = block.calcoloHash()
         print("HASH ULTIMO BLOCCO: ", hashBlock)
         #while not self.validPoW(self.transazioniUnconfirmed, hashBlock, nonce):
@@ -59,17 +57,17 @@ class Blockchain:
     # il vincolo che deve soddisfare l'hash è che deve iniziare con due 0
     # ritorna True quando lo trova
     #@classmethod
-    def validPoW(self, block, hashBlock):    
+    def validPoW(self, hashBlock):    
         hashOk = (hashBlock[:Blockchain.difficultyPoW] == '0' * Blockchain.difficultyPoW)
         #print("HASH OK: ", hashOk) 
-        return (hashOk and hashBlock == block.calcoloHash())
+        return (hashOk )
 
 #------Mining-----#
     # le transazioni create non sono ancora confermate, per cui non possono essere
     # inserite nel blocco. attendono in una coda di transazioni non confermate
     # fino a quando non vengono confermate.
-    def aggiungiTransazione(self, transazione):
-            self.transazioniUnconfirmed.append(transazione)
+    """def aggiungiTransazione(self, transazione):
+            self.transazioniUnconfirmed.append(transazione)"""
 
     # serve per creare il nuovo blocco, che contiene la transazione in sospeso che 
     # deve essere inserita al suo interno, dopo aver verificato il pow. 
@@ -80,7 +78,7 @@ class Blockchain:
         print("dentro mine")
         ultimoBlocco = self.lastBlock
         indice = len(self.chain)
-        transazioni=self.transazioniUnconfirmed
+        transazioni=self.transazioniUnconfirmed.pop(0)
         timestamp=time.time()
         #nonce = self.PoW()
         hashPrecedente = ultimoBlocco.hash
