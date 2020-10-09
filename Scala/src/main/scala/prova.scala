@@ -9,7 +9,7 @@ import scala.util.Random._
 import scala.io.StdIn._
 
 
-
+//prova git
 object Hello extends App {
   var path="src/main/scala/questionario.csv"
   var obj= new lettoreDomande(path=path,2)// il numero è per devidere quante domande per ogni categoria
