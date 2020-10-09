@@ -24,13 +24,13 @@ if __name__ == '__main__':
     print ('Connected by', addr)
     
     #while 1:
-    data = conn.recv(1024)
+    data = conn.recv(2048)
     datiRicevuti=data.decode("utf-8") # è una stringa
-    
+    print("DATI RICEVUTI: ", datiRicevuti)
     res = json.loads(datiRicevuti) # trasforma in dizionario
     print("RES: ", res)
     json_str = json.dumps(res) #trasforma in json
-    conn.send(data)
+    #conn.send(data)
 
     print("STRINGA JSON: ", json_str)
     #POST nuovaTransazione, mette la transazione nella lista transazioni non confermate

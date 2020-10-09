@@ -14,13 +14,13 @@ class Block:
             if len(transazioni)>0:
                 self.nome = transazioni["Nome"]
                 self.cognome = transazioni["Cognome"]
-                self.categoriaDomande = transazioni["CategoriaDomande"]
-                self.punteggio = transazioni["Punteggio"]
+                self.categorieDomande = transazioni["CategorieDomande"]
+                self.punteggioDomande = transazioni["PunteggioDomande"]
             else:
                 self.nome = None
                 self.cognome = None
-                self.categoriaDomande = None
-                self.punteggio = None
+                self.categorieDomande = None
+                self.punteggioDomande = None
                 
         
     def calcoloHash(self):    
