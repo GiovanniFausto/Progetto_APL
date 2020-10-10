@@ -35,11 +35,11 @@ if __name__ == '__main__':
     print("STRINGA JSON: ", json_str)
     #POST nuovaTransazione, mette la transazione nella lista transazioni non confermate
     datiTransazione = requests.post(url, data=json_str, headers=headers)
-    print("Status code: ", datiTransazione.status_code)
+    print("Status code POST /nuovaTransazione: ", datiTransazione.status_code)
 
     #GET mine, estrae le transazioni non confermate
     transaction =requests.get(url2)
-    print("Status code: ", transaction.status_code)
+    print("Status code GET /mine: ", transaction.status_code)
 
     conn.close()
 

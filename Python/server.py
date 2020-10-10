@@ -4,12 +4,13 @@ from flask import Flask, request
 from Blockchain import Blockchain
 import csv
 import pandas as pd
-
+import pickle
+#import torch
+import os
 
 # creiamo delle interfacce per il nodo server.
 # usiamo Flask come framework per creare un'applicazione REST
 app = Flask(__name__)
-
 # copia della bc per il nodo server
 blockchain = Blockchain()
 
@@ -62,16 +63,28 @@ def getChain():
     
 ### manca la parte della decentralizzazione!! per inserire nuovi nodi nella rete.
 if __name__ == '__main__':
-    app.run(port=8000)
     chainB = []
 
+    app.run(port=8000)
+    
+    fileBC = open(r'C:\Users\ALESSIA9294\Desktop\ProgettoAPL\Progetto_APL\Python\d.pkl', 'wb')
+    for block in blockchain.chain:
+        chainB.append(block.__dict__)
+    pickle.dump(chainB, fileBC)
+    fileBC.close()
+    
+    with open('d.pkl', 'rb') as f:
+        x = pickle.load(f)
+        print("file pickle: ", x)
+    
     #salva le transazioni in un file csv
     with open('bc.csv', 'w') as csvfile:
         for block in blockchain.chain:
             chainB.append(block.__dict__)
+            
             dizion = block.transazioni
-            print("DSFSGDSFGDS:", block.nome)
-             
+            #print("DSFSGDSFGDS:", block.nome)
+            
             if len(dizion) > 0 :
                 #print("CategorieDomande: ", block.transazioni["CategorieDomande"])
                 print("TIPO : ", type(block.transazioni))
@@ -79,6 +92,11 @@ if __name__ == '__main__':
                 w = csv.DictWriter(csvfile,dizion.keys())
                 w.writeheader() 
                 w.writerow(dizion)
+
+    
+    
+
+    
             
                 #writer = csv.writer(csvfile, delimiter=',')
                 #writer.writerow(chainB)
