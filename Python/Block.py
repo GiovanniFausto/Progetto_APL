@@ -28,3 +28,6 @@ class Block:
         hashBlock = sha256(block.encode()).hexdigest()
         return hashBlock
     
+    def stampa(self):
+        print(self.__dict__)
+    
