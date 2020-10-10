@@ -36,9 +36,10 @@ def nuovaTransazione():
 @app.route('/mine', methods=['GET'])
 def mineTransazioniUnconfirmed():
     block = blockchain.mine()
+    ultimoBlocco = blockchain.chain[-1]
     if block is False:
         return "Nessuna transazione da estrarre", 404
-    return "Il blocco {} è stato estratto.".format(blockchain.lastBlock.index)
+    return "Il blocco {} è stato estratto.".format(ultimoBlocco.index)
 
 # http://localhost:8000/pending 
 # per verificare se ci sono altre transazioni non confermate
@@ -64,12 +65,20 @@ if __name__ == '__main__':
     app.run(port=8000)
     chainB = []
 
-    #salva la bc con tutti i blocchi di tutti i test fatti in un file csv
-    with open('bc.csv', 'w',) as csvfile:
-        writer = csv.writer(csvfile, delimiter=',')
+    #salva le transazioni in un file csv
+    with open('bc.csv', 'w') as csvfile:
         for block in blockchain.chain:
             chainB.append(block.__dict__)
-            writer.writerow(block.__dict__)
-        writer.writerow(chainB)
-    
-    #print("CHAIN: ", chainB)
+            dizion = block.transazioni
+            print("DSFSGDSFGDS:", block.nome)
+             
+            if len(dizion) > 0 :
+                #print("CategorieDomande: ", block.transazioni["CategorieDomande"])
+                print("TIPO : ", type(block.transazioni))
+                print("KEYS: ", block.transazioni.keys())
+                w = csv.DictWriter(csvfile,dizion.keys())
+                w.writeheader() 
+                w.writerow(dizion)
+            
+                #writer = csv.writer(csvfile, delimiter=',')
+                #writer.writerow(chainB)

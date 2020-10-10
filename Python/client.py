@@ -38,8 +38,8 @@ if __name__ == '__main__':
     print("Status code: ", datiTransazione.status_code)
 
     #GET mine, estrae le transazioni non confermate
-    #transaction =requests.get(url2)
-    #print("Status code: ", transaction.status_code)
+    transaction =requests.get(url2)
+    print("Status code: ", transaction.status_code)
 
     conn.close()
 

@@ -17,13 +17,13 @@ class Blockchain:
     def createGenesisBlock(self):
         
         genesisBlock = Block(0, [], time.time(), "0")
-        genesisBlock.hash = genesisBlock.calcoloHash()
+        #genesisBlock.hash = genesisBlock.calcoloHash() #già lo calcola, non c'è bisogno
         self.chain.append(genesisBlock)
     
     #per estrarre un nuovo blocco, dopo il blocco genesi
     def createBlock(self, block, proof):
-        
-        hashPrecedente = self.lastBlock.hash
+        ultimoBlocco = self.chain[-1]
+        hashPrecedente = ultimoBlocco.hash
         #verifico se l'hash inizia con 00
         if not self.validPoW(proof):
             return False
@@ -32,9 +32,9 @@ class Blockchain:
         self.chain.append(block)
         return True
 
-    @property
+    """@property
     def lastBlock(self):
-        return self.chain[-1]
+        return self.chain[-1]"""
     
     # incrementa il nonce di 1 finchè non ottiene un hash
     # che rispetta il criterio di difficoltà impostato (due zeri iniziali).
@@ -42,8 +42,8 @@ class Blockchain:
     def PoW(self, block):
         #print("DENTRO POW")
         block.nonce = 0       
-        hashBlock = block.calcoloHash()
-        print("HASH ULTIMO BLOCCO: ", hashBlock)
+        hashBlock = block.hash
+        print("HASH NON CORRETTO: ", hashBlock)
         #while not self.validPoW(self.transazioniUnconfirmed, hashBlock, nonce):
         while not hashBlock[:Blockchain.difficultyPoW] == '0' * Blockchain.difficultyPoW:
             block.nonce += 1
@@ -76,7 +76,7 @@ class Blockchain:
         if not self.transazioniUnconfirmed:
             return False
         print("dentro mine")
-        ultimoBlocco = self.lastBlock
+        ultimoBlocco = self.chain[-1]
         indice = len(self.chain)
         transazioni=self.transazioniUnconfirmed.pop(0)
         timestamp=time.time()
