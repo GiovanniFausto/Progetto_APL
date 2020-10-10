@@ -22,8 +22,8 @@ object Hello extends App {
   var CategorieDomande=List[String]()
   /*println(lista)
   println(lista.length)*/
-  val nome=readLine("inserisci nome: ")
-  val cognome=readLine("inserisci cognome: ")
+  val nome="pinco"//readLine("inserisci nome: ")
+  val cognome="pallin"//readLine("inserisci cognome: ")
   println(nome,cognome)
 
   for(i<-lista.indices){//serve per scorrere tra le domande
@@ -50,7 +50,7 @@ object Hello extends App {
     while (risposta <0 | risposta >5) { //controllo che sia una delle risposte selezionate
       println("Inserisci una risposta tra 0 e 5: \t")
       try {
-        risposta = readInt()
+        risposta = 1//readInt()
 
         if (risposta<5){ // ho due casi quando è giusta e quando è sbagliata
           RisposteSelezionate=(lista(i)(keys.toList(risposta-1)))::RisposteSelezionate //metto la risposta che ho scelto nella lista

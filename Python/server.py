@@ -8,23 +8,21 @@ import pickle
 #import torch
 import os
 from os import path as P
+from collections import defaultdict
 
 # creiamo delle interfacce per il nodo server.
 # usiamo Flask come framework per creare un'applicazione REST
 app = Flask(__name__)
 # copia della bc per il nodo server
 path='Python\d.pkl'
-
+#controllo se esiste già una bc, e in caso carico quella
 if P.exists(path):
     with open(path, 'rb') as f:
-        blockchain = pickle.load(f)
-        
-    #blockchain=pickle.load(path)
-    print("saesad")
-    blockchain.stampa()
+        blockchain = pickle.load(f)   
+    #blockchain.stampa()
 else:
     blockchain = Blockchain()
-    blockchain.stampa()
+    #blockchain.stampa()
 
 #creiamo gli endpoint
 
@@ -55,6 +53,21 @@ def mineTransazioniUnconfirmed():
     fileBC = open(path, 'wb')
     pickle.dump(blockchain, fileBC)
     fileBC.close()
+
+    dataframe=defaultdict(list)
+    lenCatdom=len(blockchain.chain[1].categorieDomande)#saranno 7 
+    lenPunt=len(blockchain.chain[1].punteggioDomande)
+    numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
+    for block in blockchain.chain:
+        if block.index==0:pass
+        else:
+            puntDom=block.punteggioDomande #è una lsita coi punteggi 
+            for i,k in enumerate(block.categorieDomande):
+                sliceDom=puntDom[numPunDom*i:numPunDom*i+numPunDom]
+                dataframe[k].append(sliceDom)
+    
+    df = pd.DataFrame(data=dataframe)
+    print(df)
     return "Il blocco {} è stato estratto.".format(ultimoBlocco.index)
 
 # http://localhost:8000/pending ---------------------------------------------------------------------- PENDING
@@ -81,32 +94,22 @@ if __name__ == '__main__': #----------------------------------------------------
     chainB = []
 
     app.run(port=8000)
-    
-    '''fileBC = open(r'..\d.pkl', 'wb')
-    #for block in blockchain.chain:
-        #chainB.append(block.__dict__)
-    pickle.dump(blockchain, fileBC)
-    fileBC.close()
-    
-    with open('d.pkl', 'rb') as f:
-        x = pickle.load(f)
-        print("file pickle: ", x)'''
-    
+    print("fine")
     #salva le transazioni in un file csv
-    with open('bc.csv', 'w') as csvfile:
+    '''with open('bc.csv', 'w') as csvfile:
         for block in blockchain.chain:
             chainB.append(block.__dict__)
             
             dizion = block.transazioni
             #print("DSFSGDSFGDS:", block.nome)
-            
+            blockchain.stampa()
             if len(dizion) > 0 :
                 #print("CategorieDomande: ", block.transazioni["CategorieDomande"])
-                print("TIPO : ", type(block.transazioni))
-                print("KEYS: ", block.transazioni.keys())
+                #print("TIPO : ", type(block.transazioni))
+                #print("KEYS: ", block.transazioni.keys())
                 w = csv.DictWriter(csvfile,dizion.keys())
                 w.writeheader() 
                 w.writerow(dizion)
 
                 #writer = csv.writer(csvfile, delimiter=',')
-                #writer.writerow(chainB)
+                #writer.writerow(chainB)'''

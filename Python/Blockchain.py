@@ -92,6 +92,5 @@ class Blockchain:
         return True
 
     def stampa(self):
-        
         for block in self.chain:
             block.stampa()
