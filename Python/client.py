@@ -17,29 +17,53 @@ if __name__ == '__main__':
     
     HOST = ''                 # Nome simbolico che rappresenta il nodo locale
     PORT = 9999              # Porta non privilegiata arbitraria 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((HOST, PORT))
-    s.listen(1)
-    conn, addr = s.accept()
-    print ('Connected by', addr)
     
-    #while 1:
-    data = conn.recv(2048)
-    datiRicevuti=data.decode("utf-8") # è una stringa
-    print("DATI RICEVUTI: ", datiRicevuti)
-    res = json.loads(datiRicevuti) # trasforma in dizionario
-    print("RES: ", res)
-    json_str = json.dumps(res) #trasforma in json
-    #conn.send(data)
 
-    print("STRINGA JSON: ", json_str)
-    #POST nuovaTransazione, mette la transazione nella lista transazioni non confermate
-    datiTransazione = requests.post(url, data=json_str, headers=headers)
-    print("Status code POST /nuovaTransazione: ", datiTransazione.status_code)
+    try:
+        while 1:
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.bind((HOST, PORT))
+                s.listen(1)
+                conn, addr = s.accept()
+                print ('Connected by', addr)
+                data = conn.recv(2048)
+                datiRicevuti=data.decode("utf-8") # è una stringa
+                if len(datiRicevuti)>2:
+                    print("-"*150)
+                    print("DATI RICEVUTI: ", datiRicevuti)
+                    res = json.loads(datiRicevuti) # trasforma in dizionario
+                    print("RES: ", res)
+                    json_str = json.dumps(res) #trasforma in json
+                    #conn.send(data)
 
-    #GET mine, estrae le transazioni non confermate
-    transaction =requests.get(url2)
-    print("Status code GET /mine: ", transaction.status_code)
+                    print("STRINGA JSON: ", json_str)
+                    #POST nuovaTransazione, mette la transazione nella lista transazioni non confermate
+                    datiTransazione = requests.post(url, data=json_str, headers=headers)
+                    print("Status code POST /nuovaTransazione: ", datiTransazione.status_code)
 
-    conn.close()
+                    #GET mine, estrae le transazioni non confermate
+                    transaction =requests.get(url2)
+                    print("Status code GET /mine: ", transaction.status_code)
+                
+                
+            except KeyboardInterrupt:  conn.close()
+            # in teoria si deve aggiungere sopra 
+            '''res = json.loads(datiRicevuti) # trasforma in dizionario
+            print("RES: ", res)
+            json_str = json.dumps(res) #trasforma in json
+            #conn.send(data)
+
+            print("STRINGA JSON: ", json_str)
+            #POST nuovaTransazione, mette la transazione nella lista transazioni non confermate
+            datiTransazione = requests.post(url, data=json_str, headers=headers)
+            print("Status code POST /nuovaTransazione: ", datiTransazione.status_code)
+
+            #GET mine, estrae le transazioni non confermate
+            transaction =requests.get(url2)
+            print("Status code GET /mine: ", transaction.status_code)'''
+    
+    except KeyboardInterrupt: print("client spento")
+   
+   
 
