@@ -9,36 +9,43 @@ import scala.util.Random._
 import scala.io.StdIn._
 import util.Random
 
-//prova git
+
 object Hello extends App {
-  var path="src/main/scala/questionario.csv"
+  var path="src/main/scala/questionario.csv" //contiene le domande e le risposte
+  //questi 3 var servono per i nomi i cognomi e i test che voglio eseguire
   var numTest=0
   val nomiPropri=Array("Agostino", "Alberto", "Alessandro", "Alessio", "Alfio", "Alfonso", "Amedeo", "Angelo", "Antonio", "Aurelio", "Corrado", "Cosimo")
   val cognomiPropri=Array("Rossi","Ferrari","Russo","Bianchi","Romano","Gallo", "Costa","Fontana","Gialli","Verdi")
 
   while(numTest<5) {
-    val obj = new lettoreDomande(path = path, 2) // il numero è per devidere quante domande per ogni categoria
+    //creo il lettore domande che mi ritorna una lista con delle domande random a cui devo rispodenre
+    val obj = new lettoreDomande(path = path, 1) // il numero è per devidere quante domande per ogni categoria
     val lista = obj.listaDom
 
     var IdDomande = List[Int]() //metto gli id delle domande
     var PunteggioDomande = List[Double]() //metto le risposte
     var RisposteSelezionate = List[String]() //metto le risposte scelte
     var DomandeUscite = List[String]() //metto le domande
-    var CategorieDomande = List[String]()
+    var CategorieDomande = List[String]() //lo uso per le categorie
 
+    //scelgo nome e cognome random per semplicita di simulazione di un test
     val nome = nomiPropri(Random.nextInt(nomiPropri.length))               //"pinco" //readLine("inserisci nome: ")
     val cognome = cognomiPropri(Random.nextInt(cognomiPropri.length))             //"pallin" //readLine("inserisci cognome: ")
     println(nome, cognome)
 
     for (i <- lista.indices) { //serve per scorrere tra le domande
+      //in pratica dalla lista(i) ottengo un ogetto che ha id,cat,dom, e 4 risposte
+      //in pratica risp contiene le 4 possibili risposte, 1 ovviamente è quella giusta, è di tipo key value
       var risp = LinkedHashMap[String, String]() //metto le risposte quando poi faccio lo shuffle, ci saranno 4 risposte
       var risposta = -1 //metto il numero della risposta
       val h = lista(i).toList.head._2.toInt //serve pre prendere id della domanda
+
       IdDomande = h :: IdDomande //tutto sto casino per prendere id che per qualche assurdo motivo non funziona con la mappa
       //prendo solo le risposte e le mischio perchè se no la prima è sempre quella giusta
       var keys = lista(i).keys.drop(3) // mi servono solo le risposte quindi elimino i primi 3 che sono id,cat,dom
       keys = shuffle(keys) //faccio uno shuffle per mischiare le risposte altrimenti la prima è sempre quella giusta
-      for (k <- keys) {
+
+      for (k <- keys) { //scorro le varie key che sono quelle delle risposte
         risp += k -> lista(i)(k) //numeroRisposta->risposta
       }
       DomandeUscite = lista(i)("Domanda") :: DomandeUscite //metto le domande che escono
@@ -46,32 +53,37 @@ object Hello extends App {
       println("-" * 150)
       println("CATEGORIA:\t" + lista(i)("Categoria"))
       println("DOMANDA:\t" + lista(i)("Domanda"))
+
+      //facendo così le risposte saranno stampate random perchè ho fatto lo shuffle delle key
       for (j <- 0 until keys.size) {
         println(j + 1 + ")\t" + (risp(keys.toList(j)))) //serve per stampare le risposte
       }
       println("5)\tNON LA SO")
 
-      while (risposta < 0 | risposta > 5) { //controllo che sia una delle risposte selezionate
-        println("Inserisci una risposta tra 0 e 5: \t")
+      while (risposta < 1 | risposta > 5) { //controllo che sia una delle risposte selezionate
         try {
-          risposta = Random.nextInt(6)//1 //readInt()
+          println("Inserisci una risposta tra 1 e 5: \t")
+          //metto random una risposta
+          risposta = Random.nextInt(5)+1    //così ho dei random tra 1 e 5  //1 //readInt()
+          //risposta = readInt()//Random.nextInt(6)//1 //readInt()
           println(risposta)
-          if (risposta < 5) { // ho due casi quando è giusta e quando è sbagliata
-            RisposteSelezionate = (lista(i)(keys.toList(risposta - 1))) :: RisposteSelezionate //metto la risposta che ho scelto nella lista
-            if (keys.toList(risposta - 1) equals ("Risposta_Corretta")) { //risposta-1 perchè gli indici partono da 0
-              //println("ripsosta corretta")
+          if (risposta < 5 ) { // ho due casi quando è giusta e quando è sbagliata
+            val scelta=keys.toList(risposta - 1)
+            RisposteSelezionate = lista(i)(scelta) :: RisposteSelezionate //metto la risposta che ho scelto nella lista
+            if (scelta equals ("Risposta_Corretta")) { //risposta-1 perchè gli indici partono da 0
+              //entro qua se ho dato la risposta corretta
               PunteggioDomande = 1 :: PunteggioDomande
-            } else {
+            } else { //qua ho la risposta sbagliata
               PunteggioDomande = -0.25 :: PunteggioDomande
             }
-          } else if (risposta == 5) {
+          } else if (risposta == 5) {//qua mi sono astenuto e prendo 0
             PunteggioDomande = 0 :: PunteggioDomande
+            RisposteSelezionate = "NON LA SO" :: RisposteSelezionate
           }
         } catch {
-          case e: Exception => println("INSERIRE UN NUMERO DA 0 A 5, LETTERE NON CONSENTITE")
-        }
-
-      }
+          case e: Exception => println("INSERIRE UN NUMERO DA 1 A 5, LETTERE NON CONSENTITE")
+        }//TRY
+      }//WHILE
     }
     println("-" * 150)
     DomandeUscite = DomandeUscite.reverse
