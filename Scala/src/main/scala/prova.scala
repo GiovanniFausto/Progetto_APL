@@ -19,7 +19,7 @@ object Hello extends App {
 
   while(numTest<5) {
     //creo il lettore domande che mi ritorna una lista con delle domande random a cui devo rispodenre
-    val obj = new lettoreDomande(path = path, 1) // il numero è per devidere quante domande per ogni categoria
+    val obj = new lettoreDomande(path = path, 10) // il numero è per devidere quante domande per ogni categoria
     val lista = obj.listaDom
 
     var IdDomande = List[Int]() //metto gli id delle domande
@@ -121,7 +121,7 @@ object Hello extends App {
 
     s.close()
     numTest=numTest+1
-    Thread.sleep(5000)
+    Thread.sleep(10000)
   }
 
 }
