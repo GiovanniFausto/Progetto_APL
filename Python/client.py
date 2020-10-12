@@ -14,10 +14,8 @@ if __name__ == '__main__':
     url2 = "http://localhost:8000/mine"
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
-    
     HOST = ''                 # Nome simbolico che rappresenta il nodo locale
     PORT = 9999              # Porta non privilegiata arbitraria 
-    
 
     try:
         while 1:
@@ -27,7 +25,7 @@ if __name__ == '__main__':
                 s.listen(1)
                 conn, addr = s.accept()
                 print ('Connected by', addr)
-                data = conn.recv(2048)
+                data = conn.recv(2048*4)
                 datiRicevuti=data.decode("utf-8") # è una stringa
                 if len(datiRicevuti)>2:
                     print("-"*150)

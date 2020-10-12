@@ -17,10 +17,12 @@ app = Flask(__name__)
 path='Python\d.pkl'
 #controllo se esiste già una bc, e in caso carico quella
 if P.exists(path):
+    print("bc esistente")
     with open(path, 'rb') as f:
         blockchain = pickle.load(f)   
     #blockchain.stampa()
 else:
+    print("bc no presente")
     blockchain = Blockchain()
     #blockchain.stampa()
 
@@ -48,13 +50,16 @@ def nuovaTransazione():
 def mineTransazioniUnconfirmed():
     block = blockchain.mine()
     ultimoBlocco = blockchain.chain[-1]
+    
     if block is False:
         return "Nessuna transazione da estrarre", 404
+    
     fileBC = open(path, 'wb')
     pickle.dump(blockchain, fileBC)
     fileBC.close()
 
-    dataframe=defaultdict(list)
+    dataframeTot=defaultdict(list)
+    dataframeCandidato=defaultdict(list)
     lenCatdom=len(blockchain.chain[1].categorieDomande)#saranno 7 
     lenPunt=len(blockchain.chain[1].punteggioDomande)
     numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
@@ -62,12 +67,18 @@ def mineTransazioniUnconfirmed():
         if block.index==0:pass
         else:
             puntDom=block.punteggioDomande #è una lsita coi punteggi 
+            dataframeCandidato["candidato"].append((block.nome,block.cognome))
             for i,k in enumerate(block.categorieDomande):
                 sliceDom=puntDom[numPunDom*i:numPunDom*i+numPunDom]
-                dataframe[k].append(sliceDom)
+                dataframeCandidato[k].append(sliceDom)
+                for ele in sliceDom:
+                    #dataframe["candidato"].append((block.nome+block.cognome))1
+                    dataframeTot[k].append(ele)
     
-    df = pd.DataFrame(data=dataframe)
-    print(df)
+    dftot = pd.DataFrame(data=dataframeTot)
+    dfcandidato = pd.DataFrame(data=dataframeCandidato)
+    print(dftot)
+    print(dfcandidato)
     return "Il blocco {} è stato estratto.".format(ultimoBlocco.index)
 
 # http://localhost:8000/pending ---------------------------------------------------------------------- PENDING
