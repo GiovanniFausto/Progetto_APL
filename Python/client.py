@@ -2,8 +2,6 @@ import json
 import time
 from flask import Flask, request
 from Blockchain import Blockchain
-#from flask_socketio import SocketIO
-#from flask_restful import Api
 import socket, ast
 import requests
 
@@ -29,13 +27,9 @@ if __name__ == '__main__':
                 datiRicevuti=data.decode("utf-8") # è una stringa
                 if len(datiRicevuti)>2:
                     #print("-"*150)
-                    #print("DATI RICEVUTI: ", datiRicevuti)
                     res = json.loads(datiRicevuti) # trasforma in dizionario
-                    #print("RES: ", res)
                     json_str = json.dumps(res) #trasforma in json
-                    #conn.send(data)
 
-                    #print("STRINGA JSON: ", json_str)
                     #POST nuovaTransazione, mette la transazione nella lista transazioni non confermate
                     datiTransazione = requests.post(url, data=json_str, headers=headers)
                     print("Status code POST /nuovaTransazione: ", datiTransazione.status_code)
