@@ -14,6 +14,7 @@ class Block:
             if len(transazioni)>0:
                 self.nome = transazioni["Nome"]
                 self.cognome = transazioni["Cognome"]
+                self.codice=transazioni["Codice"]
                 self.categorieDomande = transazioni["CategorieDomande"]
                 self.punteggioDomande = transazioni["PunteggioDomande"]
             else:
