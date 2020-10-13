@@ -13,11 +13,11 @@ import util.Random
 object concorso extends App {
   var path="src/main/scala/questionario.csv" //contiene le domande e le risposte
   //i test che voglio eseguire
-  var numTest=5
+  var numTest=1
   var testEseguiti=0
-
+  var numDom=2
   while(testEseguiti<numTest) {
-    esecuzioneTest()
+    esecuzioneTest(numDom)
     testEseguiti=testEseguiti+1
   }
 
@@ -32,9 +32,9 @@ object concorso extends App {
   }
 
 
-  def esecuzioneTest(): Unit={
+  def esecuzioneTest(numDom:Int): Unit={
     //creo il lettore domande che mi ritorna una lista con delle domande random a cui devo rispodenre
-    val obj = new lettoreDomande(path = path, 10) // il numero è per devidere quante domande per ogni categoria
+    val obj = new lettoreDomande(path = path, numDom) // il numero è per devidere quante domande per ogni categoria
     val lista = obj.listaDom
 
     var IdDomande = List[Int]() //metto gli id delle domande
