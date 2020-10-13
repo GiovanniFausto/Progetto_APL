@@ -1,4 +1,5 @@
 import json
+import pyarrow.feather as feather
 import time
 from flask import Flask, request
 from Blockchain import Blockchain
@@ -9,18 +10,21 @@ import pickle
 import os
 from os import path as P
 from collections import defaultdict
+from pathlib import Path
 
 # creiamo delle interfacce per il nodo server.
 # usiamo Flask come framework per creare un'applicazione REST
 app = Flask(__name__)
 # copia della bc per il nodo server
-path='Python\d.pkl'
+
+path=Path("Save\Blockchain.pkl")
+pathSave="Save"
 #controllo se esiste già una bc, e in caso carico quella
 if P.exists(path):
     print("bc esistente")
     with open(path, 'rb') as f:
         blockchain = pickle.load(f)   
-    #blockchain.stampa()
+    blockchain.stampa()
 else:
     print("bc no presente")
     blockchain = Blockchain()
@@ -53,32 +57,8 @@ def mineTransazioniUnconfirmed():
     
     if block is False:
         return "Nessuna transazione da estrarre", 404
-    
-    fileBC = open(path, 'wb')
-    pickle.dump(blockchain, fileBC)
-    fileBC.close()
-
-    dataframeTot=defaultdict(list)
-    dataframeCandidato=defaultdict(list)
-    lenCatdom=len(blockchain.chain[1].categorieDomande)#saranno 7 
-    lenPunt=len(blockchain.chain[1].punteggioDomande)
-    numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
-    for block in blockchain.chain:
-        if block.index==0:pass
-        else:
-            puntDom=block.punteggioDomande #è una lsita coi punteggi 
-            dataframeCandidato["candidato"].append((block.nome,block.cognome))
-            for i,k in enumerate(block.categorieDomande):
-                sliceDom=puntDom[numPunDom*i:numPunDom*i+numPunDom]
-                dataframeCandidato[k].append(sliceDom)
-                for ele in sliceDom:
-                    #dataframe["candidato"].append((block.nome+block.cognome))1
-                    dataframeTot[k].append(ele)
-    
-    dftot = pd.DataFrame(data=dataframeTot)
-    dfcandidato = pd.DataFrame(data=dataframeCandidato)
-    print(dftot)
-    print(dfcandidato)
+    #questo salva la bc
+    salva()
     return "Il blocco {} è stato estratto.".format(ultimoBlocco.index)
 
 # http://localhost:8000/pending ---------------------------------------------------------------------- PENDING
@@ -99,6 +79,34 @@ def getChain():
     res = {"Lunghezza": dimChain, "Catena": chain}
     return json.dumps(res), 200
 
+def salva():
+    #salva la bc su un file
+    fileBC = open(path, 'wb')
+    pickle.dump(blockchain, fileBC)
+    fileBC.close()
+    #creo le dataframe per poi usarle in R
+    dataframeTot=defaultdict(list)
+    dataframeCandidato=defaultdict(list)
+    lenCatdom=len(blockchain.chain[1].categorieDomande)#saranno 7 
+    lenPunt=len(blockchain.chain[1].punteggioDomande)
+    numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
+
+    for block in blockchain.chain:#scorro i blocchi di bc
+        if block.index==0:pass #salto il primo che non mi serve
+        else:
+            puntDom=block.punteggioDomande #è una lsita coi punteggi 
+            dataframeCandidato["candidato"].append(block.nome+block.cognome+block.codice)
+            for i,k in enumerate(block.categorieDomande): #scorro le categorie 
+                sliceDom=puntDom[numPunDom*i:numPunDom*i+numPunDom] #prendo uno slice che sarebbero solo le domande di quella categoria
+                dataframeCandidato[k].append(sum(sliceDom)) #sommo il punteggio di quelle domande
+                for ele in sliceDom:
+                    #dataframe["candidato"].append((block.nome+block.cognome))1
+                    dataframeTot[k].append(ele)
+    
+    dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas per salvarle poi in feather
+    dfcandidato = pd.DataFrame(data=dataframeCandidato)
+    feather.write_feather(dftot,pathSave + '\dftot.feather')
+    feather.write_feather(dfcandidato,pathSave + '\dfcandidato.feather')
     
 ### manca la parte della decentralizzazione!! per inserire nuovi nodi nella rete.
 if __name__ == '__main__': #----------------------------------------------------------------------------- MAIN
@@ -106,21 +114,3 @@ if __name__ == '__main__': #----------------------------------------------------
 
     app.run(port=8000)
     print("fine")
-    #salva le transazioni in un file csv
-    '''with open('bc.csv', 'w') as csvfile:
-        for block in blockchain.chain:
-            chainB.append(block.__dict__)
-            
-            dizion = block.transazioni
-            #print("DSFSGDSFGDS:", block.nome)
-            blockchain.stampa()
-            if len(dizion) > 0 :
-                #print("CategorieDomande: ", block.transazioni["CategorieDomande"])
-                #print("TIPO : ", type(block.transazioni))
-                #print("KEYS: ", block.transazioni.keys())
-                w = csv.DictWriter(csvfile,dizion.keys())
-                w.writeheader() 
-                w.writerow(dizion)
-
-                #writer = csv.writer(csvfile, delimiter=',')
-                #writer.writerow(chainB)'''

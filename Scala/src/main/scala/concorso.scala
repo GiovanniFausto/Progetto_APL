@@ -10,14 +10,29 @@ import scala.io.StdIn._
 import util.Random
 
 
-object Hello extends App {
+object concorso extends App {
   var path="src/main/scala/questionario.csv" //contiene le domande e le risposte
-  //questi 3 var servono per i nomi i cognomi e i test che voglio eseguire
-  var numTest=0
-  val nomiPropri=Array("Agostino", "Alberto", "Alessandro", "Alessio", "Alfio", "Alfonso", "Amedeo", "Angelo", "Antonio", "Aurelio", "Corrado", "Cosimo")
-  val cognomiPropri=Array("Rossi","Ferrari","Russo","Bianchi","Romano","Gallo", "Costa","Fontana","Gialli","Verdi")
+  //i test che voglio eseguire
+  var numTest=5
+  var testEseguiti=0
 
-  while(numTest<5) {
+  while(testEseguiti<numTest) {
+    esecuzioneTest()
+    testEseguiti=testEseguiti+1
+  }
+
+  //mi genera il nome e il cognome
+  def generaNomeCognome(): (String,String,String)={
+    val nomiPropri=Array("Agostino", "Alberto", "Alessandro", "Alessio", "Alfio", "Alfonso", "Amedeo", "Angelo", "Antonio", "Aurelio", "Corrado", "Cosimo")
+    val cognomiPropri=Array("Rossi","Ferrari","Russo","Bianchi","Romano","Gallo", "Costa","Fontana","Gialli","Verdi")
+    val codice=Random.nextInt(100000)
+    val nome = nomiPropri(Random.nextInt(nomiPropri.length))               //"pinco" //readLine("inserisci nome: ")
+    val cognome = cognomiPropri(Random.nextInt(cognomiPropri.length))             //"pallin" //readLine("inserisci cognome: ")
+    (nome,cognome,codice.toString)
+  }
+
+
+  def esecuzioneTest(): Unit={
     //creo il lettore domande che mi ritorna una lista con delle domande random a cui devo rispodenre
     val obj = new lettoreDomande(path = path, 10) // il numero è per devidere quante domande per ogni categoria
     val lista = obj.listaDom
@@ -29,10 +44,8 @@ object Hello extends App {
     var CategorieDomande = List[String]() //lo uso per le categorie
 
     //scelgo nome e cognome random per semplicita di simulazione di un test
-    val nome = nomiPropri(Random.nextInt(nomiPropri.length))               //"pinco" //readLine("inserisci nome: ")
-    val cognome = cognomiPropri(Random.nextInt(cognomiPropri.length))             //"pallin" //readLine("inserisci cognome: ")
-    println(nome, cognome)
-
+    val (nome,cognome,codice) = generaNomeCognome()  //  readLine("inserisci nome: ")
+    println(nome, cognome,codice)
     for (i <- lista.indices) { //serve per scorrere tra le domande
       //in pratica dalla lista(i) ottengo un ogetto che ha id,cat,dom, e 4 risposte
       //in pratica risp contiene le 4 possibili risposte, 1 ovviamente è quella giusta, è di tipo key value
@@ -98,10 +111,20 @@ object Hello extends App {
     println("PUNTEGGIO RISPOSTE:\t" + PunteggioDomande)
     println("PUNTEGGIO TOTALE:\t" + PunteggioDomande.sum)
     println("CATEGORIE DOMANDE:\t" + CategorieDomande)
+    generaDati(nome, cognome, codice,IdDomande, PunteggioDomande, RisposteSelezionate, DomandeUscite, CategorieDomande)
 
+  }
+
+  def generaDati(nome:String,cognome:String,codice:String,
+                IdDomande : List[Int],
+                PunteggioDomande : List[Double],
+                RisposteSelezionate : List[String],
+                DomandeUscite : List[String],
+                CategorieDomande : List[String]) : Unit ={
     val msg = "{" +
       "\"Nome\": \"" + nome + "\", " +
       "\"Cognome\": \"" + cognome + "\", " +
+      "\"Codice\": \"" + codice + "\", " +
       "\"IdDomande\": " + IdDomande.toArray.mkString("[", ", ", "]") + ", " +
       "\"CategorieDomande\": " + CategorieDomande.toArray.mkString("[\"", "\", \"", "\"]") + ", " +
       "\"DomandeUscite\": " + DomandeUscite.toArray.mkString("[\"", "\", \"", "\"]") + ", " +
@@ -109,18 +132,15 @@ object Hello extends App {
       "\"PunteggioDomande\": " + PunteggioDomande.toArray.mkString("[", ", ", "]") +
       "}"
     println(msg)
+    inviaDati(msg)
+  }
 
+  def inviaDati(msg:String):Unit={
     val s = new Socket(InetAddress.getByName("localhost"), 9999)
-
-    //val in = new BufferedSource(s.getInputStream).getLines()
     val out = new PrintStream(s.getOutputStream)
-
     out.println(msg)
     out.flush()
-    //println("Received: " + in.next())
-
     s.close()
-    numTest=numTest+1
     Thread.sleep(10000)
   }
 

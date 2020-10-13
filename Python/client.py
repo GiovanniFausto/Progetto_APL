@@ -43,23 +43,8 @@ if __name__ == '__main__':
                     #GET mine, estrae le transazioni non confermate
                     transaction =requests.get(url2)
                     print("Status code GET /mine: ", transaction.status_code)
-                
-                
+                          
             except KeyboardInterrupt:  conn.close()
-            # in teoria si deve aggiungere sopra 
-            '''res = json.loads(datiRicevuti) # trasforma in dizionario
-            print("RES: ", res)
-            json_str = json.dumps(res) #trasforma in json
-            #conn.send(data)
-
-            print("STRINGA JSON: ", json_str)
-            #POST nuovaTransazione, mette la transazione nella lista transazioni non confermate
-            datiTransazione = requests.post(url, data=json_str, headers=headers)
-            print("Status code POST /nuovaTransazione: ", datiTransazione.status_code)
-
-            #GET mine, estrae le transazioni non confermate
-            transaction =requests.get(url2)
-            print("Status code GET /mine: ", transaction.status_code)'''
     
     except KeyboardInterrupt: print("client spento")
    
