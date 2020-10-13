@@ -19,12 +19,33 @@ app = Flask(__name__)
 
 path=Path("Save\Blockchain.pkl")
 pathSave="Save"
+#creo le dataframe per poi usarle in R
+dataframeTot=defaultdict(list)
+dataframeCandidato=defaultdict(list)
+
 #controllo se esiste già una bc, e in caso carico quella
 if P.exists(path):
     print("bc esistente")
     with open(path, 'rb') as f:
         blockchain = pickle.load(f)   
-    blockchain.stampa()
+
+    lenCatdom=len(blockchain.chain[1].categorieDomande)#saranno 7 
+    lenPunt=len(blockchain.chain[1].punteggioDomande)
+    numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
+
+    for block in blockchain.chain:#scorro i blocchi di bc
+        if block.index==0:pass #salto il primo che non mi serve
+        else:
+            puntDom=block.punteggioDomande #è una lsita coi punteggi 
+            dataframeCandidato["candidato"].append(block.nome+block.cognome+block.codice)
+            dataframeCandidato["domcat"].append(numPunDom)
+            for i,k in enumerate(block.categorieDomande): #scorro le categorie 
+                sliceDom=puntDom[numPunDom*i:numPunDom*i+numPunDom] #prendo uno slice che sarebbero solo le domande di quella categoria
+                dataframeCandidato[k].append(sum(sliceDom)) #sommo il punteggio di quelle domande
+                for ele in sliceDom:
+                    #dataframe["candidato"].append((block.nome+block.cognome))1
+                    dataframeTot[k].append(ele)
+    #blockchain.stampa()
 else:
     print("bc no presente")
     blockchain = Blockchain()
@@ -58,7 +79,7 @@ def mineTransazioniUnconfirmed():
     if block is False:
         return "Nessuna transazione da estrarre", 404
     #questo salva la bc
-    salva()
+    salva(ultimoBlocco)
     return "Il blocco {} è stato estratto.".format(ultimoBlocco.index)
 
 # http://localhost:8000/pending ---------------------------------------------------------------------- PENDING
@@ -79,34 +100,40 @@ def getChain():
     res = {"Lunghezza": dimChain, "Catena": chain}
     return json.dumps(res), 200
 
-def salva():
+def salva(block):
     #salva la bc su un file
     fileBC = open(path, 'wb')
     pickle.dump(blockchain, fileBC)
     fileBC.close()
-    #creo le dataframe per poi usarle in R
-    dataframeTot=defaultdict(list)
-    dataframeCandidato=defaultdict(list)
+    
     lenCatdom=len(blockchain.chain[1].categorieDomande)#saranno 7 
     lenPunt=len(blockchain.chain[1].punteggioDomande)
     numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
 
-    for block in blockchain.chain:#scorro i blocchi di bc
+    '''for block in blockchain.chain:#scorro i blocchi di bc
         if block.index==0:pass #salto il primo che non mi serve
-        else:
-            puntDom=block.punteggioDomande #è una lsita coi punteggi 
-            dataframeCandidato["candidato"].append(block.nome+block.cognome+block.codice)
-            for i,k in enumerate(block.categorieDomande): #scorro le categorie 
-                sliceDom=puntDom[numPunDom*i:numPunDom*i+numPunDom] #prendo uno slice che sarebbero solo le domande di quella categoria
-                dataframeCandidato[k].append(sum(sliceDom)) #sommo il punteggio di quelle domande
-                for ele in sliceDom:
-                    #dataframe["candidato"].append((block.nome+block.cognome))1
-                    dataframeTot[k].append(ele)
+        else:'''
+    puntDom=block.punteggioDomande #è una lsita coi punteggi 
+    dataframeCandidato["candidato"].append(block.nome+block.cognome+block.codice)
+    dataframeCandidato["domcat"].append(numPunDom)
+    for i,k in enumerate(block.categorieDomande): #scorro le categorie 
+        sliceDom=puntDom[numPunDom*i:numPunDom*i+numPunDom] #prendo uno slice che sarebbero solo le domande di quella categoria
+        dataframeCandidato[k].append(sum(sliceDom)) #sommo il punteggio di quelle domande
+        for ele in sliceDom:
+            dataframeTot[k].append(ele)
     
     dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas per salvarle poi in feather
     dfcandidato = pd.DataFrame(data=dataframeCandidato)
-    feather.write_feather(dftot,pathSave + '\dftot.feather')
-    feather.write_feather(dfcandidato,pathSave + '\dfcandidato.feather')
+    salvato = False
+    while salvato==False:
+        try:
+            feather.write_feather(dftot,pathSave + '\dftot.feather')
+            feather.write_feather(dfcandidato,pathSave + '\dfcandidato.feather')
+            print("salvato")
+            salvato=True
+        except: pass
+    
+        
     
 ### manca la parte della decentralizzazione!! per inserire nuovi nodi nella rete.
 if __name__ == '__main__': #----------------------------------------------------------------------------- MAIN

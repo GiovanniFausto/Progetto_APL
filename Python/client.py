@@ -28,14 +28,14 @@ if __name__ == '__main__':
                 data = conn.recv(2048*4)
                 datiRicevuti=data.decode("utf-8") # è una stringa
                 if len(datiRicevuti)>2:
-                    print("-"*150)
-                    print("DATI RICEVUTI: ", datiRicevuti)
+                    #print("-"*150)
+                    #print("DATI RICEVUTI: ", datiRicevuti)
                     res = json.loads(datiRicevuti) # trasforma in dizionario
-                    print("RES: ", res)
+                    #print("RES: ", res)
                     json_str = json.dumps(res) #trasforma in json
                     #conn.send(data)
 
-                    print("STRINGA JSON: ", json_str)
+                    #print("STRINGA JSON: ", json_str)
                     #POST nuovaTransazione, mette la transazione nella lista transazioni non confermate
                     datiTransazione = requests.post(url, data=json_str, headers=headers)
                     print("Status code POST /nuovaTransazione: ", datiTransazione.status_code)

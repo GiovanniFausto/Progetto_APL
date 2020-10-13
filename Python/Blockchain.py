@@ -43,14 +43,14 @@ class Blockchain:
         #print("DENTRO POW")
         block.nonce = 0       
         hashBlock = block.hash
-        print("HASH NON CORRETTO: ", hashBlock)
+        #print("HASH NON CORRETTO: ", hashBlock)
         #while not self.validPoW(self.transazioniUnconfirmed, hashBlock, nonce):
         while not hashBlock[:Blockchain.difficultyPoW] == '0' * Blockchain.difficultyPoW:
             block.nonce += 1
             hashBlock = block.calcoloHash()
         
-        print("HASH CON 00 : ", hashBlock)
-        print("NONCE POW: ", block.nonce)
+        #print("HASH CON 00 : ", hashBlock)
+        #print("NONCE POW: ", block.nonce)
         return hashBlock
     
     # verifico se hashBlock ha un hash valido per il blocco
