@@ -87,10 +87,12 @@ object concorso extends App {
               //entro qua se ho dato la risposta corretta
               PunteggioDomande = 1 :: PunteggioDomande
             } else { //qua ho la risposta sbagliata
-              PunteggioDomande = -0.25 :: PunteggioDomande
+              //PunteggioDomande = -0.25 :: PunteggioDomande
+              PunteggioDomande = 0 :: PunteggioDomande
             }
           } else if (risposta == 5) {//qua mi sono astenuto e prendo 0
-            PunteggioDomande = 0 :: PunteggioDomande
+            //PunteggioDomande = 0 :: PunteggioDomande
+            PunteggioDomande = 0.25 :: PunteggioDomande
             RisposteSelezionate = "NON LA SO" :: RisposteSelezionate
           }
         } catch {
