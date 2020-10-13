@@ -6,8 +6,6 @@ from Blockchain import Blockchain
 import csv
 import pandas as pd
 import pickle
-#import torch
-import os
 from os import path as P
 from collections import defaultdict
 from pathlib import Path
@@ -15,13 +13,46 @@ from pathlib import Path
 # creiamo delle interfacce per il nodo server.
 # usiamo Flask come framework per creare un'applicazione REST
 app = Flask(__name__)
-# copia della bc per il nodo server
 
+#path
 path=Path("Save\Blockchain.pkl")
 pathSave="Save"
+
 #creo le dataframe per poi usarle in R
 dataframeTot=defaultdict(list)
 dataframeCandidato=defaultdict(list)
+
+#salva la bc in un file Pickle
+def saveBCOnPickle():
+    fileBC = open(path, 'wb')
+    pickle.dump(blockchain, fileBC)
+    fileBC.close()
+
+#salva i punteggi in dataframe, per R
+def salvaDataframe(block):     
+    lenCatdom=len(blockchain.chain[1].categorieDomande)#saranno 7 
+    lenPunt=len(blockchain.chain[1].punteggioDomande)
+    numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
+
+    puntDom=block.punteggioDomande #è una lsita coi punteggi 
+    dataframeCandidato["candidato"].append(block.nome+block.cognome+block.codice)
+    dataframeCandidato["domcat"].append(numPunDom)
+    for i,k in enumerate(block.categorieDomande): #scorro le categorie 
+        sliceDom=puntDom[numPunDom*i:numPunDom*i+numPunDom] #prendo uno slice che sarebbero solo le domande di quella categoria
+        dataframeCandidato[k].append(sum(sliceDom)) #sommo il punteggio di quelle domande
+        for ele in sliceDom:
+            dataframeTot[k].append(ele)
+    
+    dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas per salvarle poi in feather
+    dfcandidato = pd.DataFrame(data=dataframeCandidato)
+    salvato = False
+    while salvato==False:
+        try:
+            feather.write_feather(dftot,pathSave + '\dftot.feather')
+            feather.write_feather(dfcandidato,pathSave + '\dfcandidato.feather')
+            print("salvato")
+            salvato=True
+        except: pass
 
 #controllo se esiste già una bc, e in caso carico quella
 if P.exists(path):
@@ -43,7 +74,6 @@ if P.exists(path):
                 sliceDom=puntDom[numPunDom*i:numPunDom*i+numPunDom] #prendo uno slice che sarebbero solo le domande di quella categoria
                 dataframeCandidato[k].append(sum(sliceDom)) #sommo il punteggio di quelle domande
                 for ele in sliceDom:
-                    #dataframe["candidato"].append((block.nome+block.cognome))1
                     dataframeTot[k].append(ele)
     #blockchain.stampa()
 else:
@@ -58,28 +88,26 @@ else:
 @app.route('/nuovaTransazione', methods=['POST'])
 def nuovaTransazione():
     datiTransazione = request.get_json()
-    #richiesta = ["nome"] # transazione dell'utente in formato json
-    #richiesta = ["Nome", "Cognome", "IdDomande", "DomandeUscite", "RisposteSelezionate", "PunteggioDomande"]
-    
-    """if not all(k in datiTransazione for k in richiesta):
-        return "Dati mancanti nella richiesta", 404"""
-
     datiTransazione["timestamp"] = time.time()
-    blockchain.transazioniUnconfirmed.append(datiTransazione)# per aggiungere la transazione
 
+    blockchain.transazioniUnconfirmed.append(datiTransazione)# per aggiungere la transazione alla lista di transaz non confermate
     return "Transazione creata con successo", 201
 
 #http://localhost:8000/mine ----------------------------------------------------------------------  MINE
 # per comunicare al server di estrarre un nuovo blocco
 @app.route('/mine', methods=['GET'])
 def mineTransazioniUnconfirmed():
-    block = blockchain.mine()
+    block = blockchain.mine() # mine delle transazioni non confermate
     ultimoBlocco = blockchain.chain[-1]
     
     if block is False:
         return "Nessuna transazione da estrarre", 404
+
     #questo salva la bc
-    salva(ultimoBlocco)
+    saveBCOnPickle()
+    #salva dataframe
+    salvaDataframe(ultimoBlocco)
+
     return "Il blocco {} è stato estratto.".format(ultimoBlocco.index)
 
 # http://localhost:8000/pending ---------------------------------------------------------------------- PENDING
@@ -100,44 +128,9 @@ def getChain():
     res = {"Lunghezza": dimChain, "Catena": chain}
     return json.dumps(res), 200
 
-def salva(block):
-    #salva la bc su un file
-    fileBC = open(path, 'wb')
-    pickle.dump(blockchain, fileBC)
-    fileBC.close()
-    
-    lenCatdom=len(blockchain.chain[1].categorieDomande)#saranno 7 
-    lenPunt=len(blockchain.chain[1].punteggioDomande)
-    numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
-
-    '''for block in blockchain.chain:#scorro i blocchi di bc
-        if block.index==0:pass #salto il primo che non mi serve
-        else:'''
-    puntDom=block.punteggioDomande #è una lsita coi punteggi 
-    dataframeCandidato["candidato"].append(block.nome+block.cognome+block.codice)
-    dataframeCandidato["domcat"].append(numPunDom)
-    for i,k in enumerate(block.categorieDomande): #scorro le categorie 
-        sliceDom=puntDom[numPunDom*i:numPunDom*i+numPunDom] #prendo uno slice che sarebbero solo le domande di quella categoria
-        dataframeCandidato[k].append(sum(sliceDom)) #sommo il punteggio di quelle domande
-        for ele in sliceDom:
-            dataframeTot[k].append(ele)
-    
-    dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas per salvarle poi in feather
-    dfcandidato = pd.DataFrame(data=dataframeCandidato)
-    salvato = False
-    while salvato==False:
-        try:
-            feather.write_feather(dftot,pathSave + '\dftot.feather')
-            feather.write_feather(dfcandidato,pathSave + '\dfcandidato.feather')
-            print("salvato")
-            salvato=True
-        except: pass
-    
-        
     
 ### manca la parte della decentralizzazione!! per inserire nuovi nodi nella rete.
 if __name__ == '__main__': #----------------------------------------------------------------------------- MAIN
-    chainB = []
 
     app.run(port=8000)
     print("fine")
