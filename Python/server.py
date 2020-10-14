@@ -22,6 +22,12 @@ pathSave="Save"
 dataframeTot=defaultdict(list)
 dataframeCandidato=defaultdict(list)
 
+def calcolaInfoDomande():
+    lenCatdom=len(blockchain.chain[1].categorieDomande)#saranno 7 
+    lenPunt=len(blockchain.chain[1].punteggioDomande)
+    numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
+    return lenCatdom,lenPunt,numPunDom
+    
 #controllo se esiste già una bc, e in caso carico quella
 if P.exists(path):
     print("bc esistente")
@@ -51,11 +57,7 @@ else:
     blockchain = Blockchain()
     #blockchain.stampa()
 
-def calcolaInfoDomande():
-    lenCatdom=len(blockchain.chain[1].categorieDomande)#saranno 7 
-    lenPunt=len(blockchain.chain[1].punteggioDomande)
-    numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
-    return lenCatdom,lenPunt,numPunDom
+
 
 #salva la bc in un file Pickle
 def saveBCOnPickle():

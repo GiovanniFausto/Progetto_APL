@@ -16,11 +16,13 @@ if __name__ == '__main__':
     PORT = 9999              # Porta non privilegiata arbitraria 
 
     try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind((HOST, PORT))
+        s.settimeout(1.0)
+        s.listen(1)
         while 1:
+            
             try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.bind((HOST, PORT))
-                s.listen(1)
                 conn, addr = s.accept()
                 print ('Connected by', addr)
                 data = conn.recv(2048*4)
@@ -38,8 +40,8 @@ if __name__ == '__main__':
                     transaction =requests.get(url2)
                     print("Status code GET /mine: ", transaction.status_code)
                           
-            except KeyboardInterrupt:  conn.close()
-    
+            except socket.timeout: pass
+            
     except KeyboardInterrupt: print("client spento")
    
    
