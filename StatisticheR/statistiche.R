@@ -4,16 +4,18 @@ path2<-"../Save/dftot.feather"
 h="ciao"
 
 if (file.exists(path1) & file.exists(path2)){
+  repeat{
+  
   dfcandi <- arrow::read_feather(path1)
   dftot <- arrow::read_feather(path2)
   catefgorie<-names(dftot)
   candidati<-dfcandi$candidato
-  print(candidati)
+  #print(candidati)
   prova<-dfcandi[-c(1:2)]
-  print("----------------------tabella candidati----------------------------------------------")
-  print(prova)
-  print("----------------------tabella totali----------------------------------------------")
-  print(dftot)
+  #print("----------------------tabella candidati----------------------------------------------")
+  #print(prova)
+  #print("----------------------tabella totali----------------------------------------------")
+  #print(dftot)
   
   sommaColonne<-colSums(dftot)
   
@@ -29,9 +31,11 @@ if (file.exists(path1) & file.exists(path2)){
   
   #Sys.sleep(5)
   
-  barplot(as.matrix(rowSums(prova)/(numeroCategorie*numerdomcategoria)),
+  barplot(as.matrix(rowSums(prova)),
           beside=TRUE,las=2, names.arg =candidati, main="Punteggio di ogni candidato",horiz=TRUE) 
-  
+  Sys.sleep(3.333)
+  }
+  break
 }
 
   

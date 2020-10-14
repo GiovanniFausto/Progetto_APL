@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     HOST = ''                 # Nome simbolico che rappresenta il nodo locale
     PORT = 9999              # Porta non privilegiata arbitraria 
-
+    #prova
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind((HOST, PORT))
