@@ -23,13 +23,14 @@ if (file.exists(path1) & file.exists(path2)){
   numerdomcategoria<-dfcandi$domcat[[1]] #contiene il numero di domande per ogni categoria
   # sommo tutti i punteggi di una categoria e li divido per il numero di domande
   #ho qualcosa del tipo 10 punti su 40 domande esempio
+  par(mfrow = c(1:2))
   barplot(as.matrix(colSums(dftot)/numerdomande), 
-          beside=TRUE, names.arg =catefgorie, main="Risposte per ogni categoria") 
+          beside=TRUE,las=2, names.arg =catefgorie, main="Risposte per ogni categoria",horiz=TRUE) 
   
-  Sys.sleep(5)
+  #Sys.sleep(5)
   
   barplot(as.matrix(rowSums(prova)/(numeroCategorie*numerdomcategoria)),
-          beside=TRUE, names.arg =candidati, main="Punteggio di ogni candidato") 
+          beside=TRUE,las=2, names.arg =candidati, main="Punteggio di ogni candidato",horiz=TRUE) 
   
 }
 

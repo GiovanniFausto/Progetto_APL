@@ -23,12 +23,15 @@ class Block:
                 self.categorieDomande = None
                 self.punteggioDomande = None
                 
-        
+    #serve a calcolare hash
     def calcoloHash(self):    
         block = json.dumps(self.__dict__, sort_keys=True) #__dict__ contiene tutti gli attributi di block
         hashBlock = sha256(block.encode()).hexdigest()
         return hashBlock
-    
+    #serve per stampare tutte le info del blocco
     def stampa(self):
         print(self.__dict__)
+    #serve per prendere nome cognome e codice, serve poi nelle dataframe
+    def infoCandidato(self):
+        return self.nome+"_"+self.cognome+"_"+self.codice
     

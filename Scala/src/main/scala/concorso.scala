@@ -13,9 +13,9 @@ import util.Random
 object concorso extends App {
   var path="src/main/scala/questionario.csv" //contiene le domande e le risposte
   //i test che voglio eseguire
-  var numTest=1
+  var numTest=5
   var testEseguiti=0
-  var numDom=2
+  var numDom=10
   while(testEseguiti<numTest) {
     esecuzioneTest(numDom)
     testEseguiti=testEseguiti+1
