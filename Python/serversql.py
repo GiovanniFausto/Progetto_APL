@@ -10,8 +10,13 @@ from os import path as P
 from collections import defaultdict
 from pathlib import Path
 
+import sqlalchemy
+#faccio quello che serve per connettermi al db creato 
+sqlEngine       = sqlalchemy.create_engine('mysql+pymysql://root:@127.0.0.1/apl', pool_recycle=3600)
+dbConnection    = sqlEngine.connect()
 # creiamo delle interfacce per il nodo server.
 # usiamo Flask come framework per creare un'applicazione REST
+
 app = Flask(__name__)
 
 #path
@@ -51,6 +56,12 @@ if P.exists(path):
                 dataframeCandidato[k].append(sum(sliceDom)) #sommo il punteggio di quelle domande
                 for ele in sliceDom:
                     dataframeTot[k].append(ele)
+
+            dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas per salvarle poi in feather
+            dfcandidato = pd.DataFrame(data=dataframeCandidato)
+
+    frame = dfcandidato.to_sql("dfcandidato", dbConnection,if_exists='replace')
+    frame = dftot.to_sql("dftot", dbConnection,if_exists='replace')
     #blockchain.stampa()
 else:
     print("bc no presente")
@@ -67,10 +78,6 @@ def saveBCOnPickle():
 
 #salva i punteggi in dataframe, per R
 def salvaDataframe(block):     
-    #lenCatdom=len(blockchain.chain[1].categorieDomande)#saranno 7 
-    #lenPunt=len(blockchain.chain[1].punteggioDomande)
-    #numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
-
     lenCatdom,lenPunt,numPunDom=calcolaInfoDomande()
     
     puntDom=block.punteggioDomande #è una lsita coi punteggi 
@@ -84,15 +91,9 @@ def salvaDataframe(block):
     
     dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas per salvarle poi in feather
     dfcandidato = pd.DataFrame(data=dataframeCandidato)
-    salvato = False
-    while salvato==False:
-        try:
-            feather.write_feather(dftot,pathSave + '\dftot.feather')
-            feather.write_feather(dfcandidato,pathSave + '\dfcandidato.feather')
-            print("salvato")
-            salvato=True
-        except: pass
 
+    frame = dfcandidato.to_sql("dfcandidato", dbConnection,if_exists='replace')
+    frame = dftot.to_sql("dftot", dbConnection,if_exists='replace')
 
 #creiamo gli endpoint
 
