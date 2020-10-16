@@ -6,7 +6,7 @@ h="ciao"
 
 if (file.exists(path1) & file.exists(path2)){
   
-  repeat{
+  #repeat{
   #contengono le dataframe salvate da py
   dfcandi <- arrow::read_feather(path1)
   dftot <- arrow::read_feather(path2)
@@ -33,10 +33,17 @@ if (file.exists(path1) & file.exists(path2)){
           beside=TRUE,las=2, names.arg =catefgorie, main="Risposte per ogni categoria", xlab="Punteggio", horiz=TRUE) 
   
   #------------------------------------------------------------------------------------------------------------
-  
+  #contiene una dataframe che ha i candidati e la somma dei loro punteggi del test
+  output <- data.frame( candidati = dfcandi$candidato ,
+                        punteggitotali = apply(dfcandi[3:9], 1, sum) )
+  #la ordino in modo che va dal punteggio più basso al più alto 
+  output<-output[order(output$punteggitotali),]
+  #la inverto così i primi sono quelli col punteggio più alto 
+  output<-output[order(nrow(output):1),] 
+
   #questo invede ? per plottare i punteggi di ogni candidato, in pratica ? il suo punteggio finale del test
-  barplot(as.matrix(rowSums(categoriPunteggi)),
-          beside=TRUE,las=2, names.arg =candidati, main="Punteggio di ogni candidato", xlab="Punteggio", horiz=TRUE)
+  barplot(output$punteggitotali,
+          beside=TRUE,las=2, names.arg =output$candidati, main="Punteggio di ogni candidato", xlab="Punteggio", horiz=TRUE)
   
   #------------------------------------------------------------------------------------------------------------
   
@@ -76,8 +83,8 @@ if (file.exists(path1) & file.exists(path2)){
   plot(totPunteggi,y, main = "Distribuzione Normale",)
   
   Sys.sleep(3.333)
-  }
-  break
+  #}
+  #break
 }
 
 
