@@ -13,9 +13,19 @@ import util.Random
 object concorso extends App {
   var path="src/main/scala/questionario.csv" //contiene le domande e le risposte
   //i test che voglio eseguire
-  var numTest=5
+  var numTest=1
   var testEseguiti=0
-  var numDom=10
+  val numDom=10
+
+  print("Eseguire simulazione true\\false?")
+  var simulazione=readBoolean()
+  if (simulazione){
+    print("Quanti test vuoi eseguire?")
+    numTest=readInt()
+  }
+  println(simulazione)
+  println(numTest)
+
   while(testEseguiti<numTest) {
     esecuzioneTest(numDom)
     testEseguiti=testEseguiti+1
@@ -25,9 +35,19 @@ object concorso extends App {
   def generaNomeCognome(): (String,String,String)={
     val nomiPropri=Array("Agostino", "Alberto", "Alessandro", "Alessio", "Alfio", "Alfonso", "Amedeo", "Angelo", "Antonio", "Aurelio", "Corrado", "Cosimo")
     val cognomiPropri=Array("Rossi","Ferrari","Russo","Bianchi","Romano","Gallo", "Costa","Fontana","Gialli","Verdi")
-    val codice=Random.nextInt(100000)
-    val nome = nomiPropri(Random.nextInt(nomiPropri.length))               //"pinco" //readLine("inserisci nome: ")
-    val cognome = cognomiPropri(Random.nextInt(cognomiPropri.length))             //"pallin" //readLine("inserisci cognome: ")
+    var codice=0
+    var nome=""
+    var cognome=""
+    if (!simulazione){
+       print("inserisci codice:")
+       codice=readInt()
+       nome = readLine("inserisci nome: ")
+       cognome = readLine("inserisci cognome: ")
+    }else {
+       codice = Random.nextInt(100000)
+       nome = nomiPropri(Random.nextInt(nomiPropri.length))
+       cognome = cognomiPropri(Random.nextInt(cognomiPropri.length))
+    }
     (nome,cognome,codice.toString)
   }
 
@@ -77,7 +97,7 @@ object concorso extends App {
         try {
           println("Inserisci una risposta tra 1 e 5: \t")
           //metto random una risposta
-          risposta = Random.nextInt(5)+1    //così ho dei random tra 1 e 5  //1 //readInt()
+          risposta =if(simulazione) Random.nextInt(5)+1  else  readInt()  //così ho dei random tra 1 e 5  //1 //readInt()
           //risposta = readInt()//Random.nextInt(6)//1 //readInt()
           println(risposta)
           if (risposta < 5 ) { // ho due casi quando è giusta e quando è sbagliata
@@ -123,6 +143,7 @@ object concorso extends App {
                 RisposteSelezionate : List[String],
                 DomandeUscite : List[String],
                 CategorieDomande : List[String]) : Unit ={
+
     val msg = "{" +
       "\"Nome\": \"" + nome + "\", " +
       "\"Cognome\": \"" + cognome + "\", " +
