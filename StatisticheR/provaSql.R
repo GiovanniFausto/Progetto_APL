@@ -11,7 +11,7 @@ target <- "10:00"
 
 if(oraCorrente>target){# controllo se sono oltre un certo orario che significa che ho finito i test e quindi posso fare delle statistiche
   print("E' L'ORA GIUSTA PER FARE LE STATISTICHE")
-  ucscDb <- dbConnect(MySQL(), user="root", host="localhost",db="apl")
+  ucscDb <- dbConnect(MySQL(), user="root", password="0000", host="localhost",db="apl")
   
   allTables <- dbListTables(ucscDb)
   
@@ -31,6 +31,7 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   numeroCategorie<-ncol(dftot)#sar 7 categorie
   numerdomcategoria<-dfcandi$domcat[[1]] #contiene il numero di domande per ogni categoria
   
+  
   par(mfrow = c(3,2), mar = c(4, 7, 3, 7))#serve per poter plottare 4 grafici in 2x2 [mar = c(bottom, left, top, right)]
   
   #------------------------------------------------------------------------------------------------------------
@@ -45,9 +46,9 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   #contiene una dataframe che ha i candidati e la somma dei loro punteggi del test
   output <- data.frame( candidati = dfcandi$candidato ,
                         punteggitotali = apply(dfcandi[3:9], 1, sum) )
-  #la ordino in modo che va dal punteggio più basso al più alto 
+  #la ordino in modo che va dal punteggio pi? basso al pi? alto 
   output<-output[order(output$punteggitotali),]
-  #la inverto così i primi sono quelli col punteggio più alto 
+  #la inverto cos? i primi sono quelli col punteggio pi? alto 
   output<-output[order(nrow(output):1),] 
   
   #questo invede ? per plottare i punteggi di ogni candidato, in pratica ? il suo punteggio finale del test
@@ -88,6 +89,21 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   
   #distribuzione normale
   y <- dnorm(totPunteggi, mean = media, sd = devstd)
-  plot(totPunteggi,y, main = "Distribuzione Normale",)
+  plot(totPunteggi,y, main = "Distribuzione Normale")
+  
+  #---------------------------------------------------------------------------------------------------------
+  #salva plot
+  jpeg("rdata.jpg")
+  par(mfrow = c(3,2), mar = c(4, 7, 3, 7))
+  barplot(as.matrix(sommaColonne/numerdomande), 
+          beside=TRUE,las=2, names.arg =catefgorie, main="Risposte per ogni categoria", xlab="Punteggio", horiz=TRUE) 
+  barplot(output$punteggitotali,
+          beside=TRUE,las=2, names.arg =output$candidati, main="Punteggio di ogni candidato", xlab="Punteggio", horiz=TRUE)
+  pie(colSums(dftot)/numerdomande, labels = catefgorie, main="Media punteggi")
+  barplot(as.matrix(max_min),
+          beside=TRUE,las=2, names.arg =names(max_min), main="Punteggio di ogni candidato", xlab="Punteggio", horiz=TRUE)
+  plot(totPunteggi,y, main = "Distribuzione Normale")
+  
+  dev.off()
   
 }
