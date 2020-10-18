@@ -20,8 +20,8 @@ dbConnection    = sqlEngine.connect()
 app = Flask(__name__)
 
 #path
-path=Path("Save\Blockchain.pkl")
-pathSave="Save"
+path=Path("..\BC\Blockchain.pkl")
+
 
 #creo le dataframe per poi usarle in R
 dataframeTot=defaultdict(list)
@@ -142,6 +142,6 @@ def getChain():
     
 ### manca la parte della decentralizzazione!! per inserire nuovi nodi nella rete.
 if __name__ == '__main__': #----------------------------------------------------------------------------- MAIN
-
+    print("SERVER ATTIVO")
     app.run(port=8000)
     print("SERVER SPENTO")

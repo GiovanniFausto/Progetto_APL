@@ -9,14 +9,18 @@ oraCorrente<-paste(ore, minuti,sep=":")
 
 target <- "10:00"#quello da confontare 
 
+
 if(oraCorrente>target){# controllo se sono oltre un certo orario che significa che ho finito i test e quindi posso fare delle statistiche
   print("E' L'ORA GIUSTA PER FARE LE STATISTICHE")
-  ucscDb <- dbConnect(MySQL(), user="root", password="", host="localhost",db="apl")# serve per la connessione al db
+ 
   
-  allTables <- dbListTables(ucscDb)# mi ritorna la lista di tutte le tabelle nel db
+  connessioneDB <- dbConnect(MySQL(), user="root", password="", host="localhost",db="apl")# serve per la connessione al db
   
-  dfcandi <- dbReadTable(ucscDb, "dfcandidato")#prendo le dataframe e tolgo la prima colonna che sono indici della tabella
-  dftot <- dbReadTable(ucscDb, "dftot")
+  allTables <- dbListTables(connessioneDB)# mi ritorna la lista di tutte le tabelle nel db
+  
+  dfcandi <- dbReadTable(connessioneDB, "dfcandidato")#prendo le dataframe e tolgo la prima colonna che sono indici della tabella
+  dftot <- dbReadTable(connessioneDB, "dftot")
+  dbDisconnect(connessioneDB)# mi disconnetto una volta che ho preso le tabelle 
   dfcandi<-dfcandi[-c(1)]
   dftot<-dftot[-c(1)]
   
@@ -40,7 +44,7 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   
   # sommo tutti i punteggi di una categoria e li divido per il numero di domande
   #ho qualcosa del tipo 10 punti su 40 domande esempio
-  jpeg("image/plot1.jpg", width = 800, height = 800)#serve per salvare le immagini
+  jpeg("../Plot/1_MediaPunteggiCategorieDomande.jpg", width = 800, height = 800)#serve per salvare le immagini
   par(mar=c(5, 13 ,4 ,2))
   barplot(as.matrix(sommaColonne/numerdomande), 
           beside=TRUE,las=2, names.arg =catefgorie, main="Risposte per ogni categoria", xlab="Punteggio", horiz=TRUE) 
@@ -57,7 +61,7 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
 
   #questo invede ? per plottare i punteggi di ogni candidato, in pratica ? il suo punteggio finale del test
   
-  jpeg("image/plot2.jpg", width = 800, height = 800)
+  jpeg("../Plot/2_PunteggiCandidati.jpg", width = 800, height = 800)
   #output<-head(output,10) per prendere i primi 10
   
   #questo invede ? per plottare i punteggi di ogni candidato, in pratica ? il suo punteggio finale del test
@@ -68,7 +72,7 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   #-------------------------------------------------------------------------------------------------------------------------------------------------------
   
   #un grafico semplice a torta simile al ptrimo 
-  jpeg("image/plot3.jpg", width = 800, height = 800)
+  jpeg("../Plot/3_TortaCategorie.jpg", width = 800, height = 800)
   pie(colSums(dftot)/numerdomande, labels = catefgorie, main="Media punteggi")
   dev.off()
   
@@ -84,7 +88,7 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   #metto massimo e min insieme per poi plottarli
   max_min<-c(tiziobravo,tizioscarso)
   #plotto max e min
-  jpeg("image/plot4.jpg", width = 800, height = 800)
+  jpeg("../Plot/4_MiglirePeggiore.jpg", width = 800, height = 800)
   par(mar=c(5, 13 ,4 ,2))
   barplot(as.matrix(max_min),
           beside=TRUE,las=2, names.arg =names(max_min), main="Punteggio di ogni candidato", xlab="Punteggio", horiz=TRUE)
@@ -104,13 +108,13 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   
   #distribuzione normale
   y <- dnorm(totPunteggi, mean = media, sd = devstd)
-  jpeg("image/plot5.jpg", width = 800, height = 800)
+  jpeg("../Plot/5_DistribuzionePunteggi.jpg", width = 800, height = 800)
   plot(totPunteggi,y, type="p", lwd= 5, main = "Distribuzione Normale")
   dev.off()
   #-------------------------------------------------------------------------------------------------------------------------------------------------------
   
   #salva tutti i plot
-  jpeg("image/rdata.jpg")
+  jpeg("../Plot/6_RiassuntoDati.jpg")
   par(mfrow = c(3,2), mar = c(4, 7, 3, 7))
   barplot(as.matrix(sommaColonne/numerdomande), 
           beside=TRUE,las=2, names.arg =catefgorie, main="Risposte per ogni categoria", xlab="Punteggio", horiz=TRUE) 

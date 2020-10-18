@@ -11,7 +11,7 @@ if __name__ == '__main__':
     url = "http://localhost:8000/nuovaTransazione"
     url2 = "http://localhost:8000/mine"
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-
+    print("CLIENT ATTIVO")
     HOST = ''                 # Nome simbolico che rappresenta il nodo locale
     PORT = 9999              # Porta non privilegiata arbitraria 
     #prova
@@ -42,7 +42,7 @@ if __name__ == '__main__':
                           
             except socket.timeout: pass
             
-    except KeyboardInterrupt: print("client spento")
+    except KeyboardInterrupt: print("CLIENT SPENTO")
    
    
 
