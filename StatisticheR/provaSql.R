@@ -14,7 +14,7 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   print("E' L'ORA GIUSTA PER FARE LE STATISTICHE")
  
   
-  connessioneDB <- dbConnect(MySQL(), user="root", password="", host="localhost",db="apl")# serve per la connessione al db
+  connessioneDB <- dbConnect(MySQL(), user="root", password="0000", host="localhost",db="apl")# serve per la connessione al db
   
   allTables <- dbListTables(connessioneDB)# mi ritorna la lista di tutte le tabelle nel db
   
@@ -46,8 +46,8 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   #ho qualcosa del tipo 10 punti su 40 domande esempio
   jpeg("../Plot/1_MediaPunteggiCategorieDomande.jpg", width = 800, height = 800)#serve per salvare le immagini
   par(mar=c(5, 13 ,4 ,2))
-  barplot(as.matrix(sommaColonne/numerdomande), 
-          beside=TRUE,las=2, names.arg =catefgorie, main="Risposte per ogni categoria", xlab="Punteggio", horiz=TRUE) 
+  barplot(sommaColonne/numerdomande, 
+          beside=TRUE,las=2, names.arg =catefgorie, main="Risposte per ogni categoria", xlab="Punteggio", horiz=TRUE, col=rgb(0.2,0.4,0.6,0.6)) 
   dev.off()
   #-------------------------------------------------------------------------------------------------------------------------------------------------------
   
@@ -67,7 +67,7 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   #questo invede ? per plottare i punteggi di ogni candidato, in pratica ? il suo punteggio finale del test
   par(mar=c(5, 13 ,4 ,2))
   barplot(output$punteggitotali,
-          beside=TRUE,las=2, names.arg = output$candidati, main="Punteggio di ogni candidato", xlab="Punteggio", horiz=TRUE)
+          beside=TRUE,las=2, names.arg = output$candidati, main="Punteggio di ogni candidato", xlab="Punteggio", horiz=TRUE, col=rgb(0.2,0.4,0.6,0.6))
   dev.off()
   #-------------------------------------------------------------------------------------------------------------------------------------------------------
   
@@ -90,8 +90,8 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   #plotto max e min
   jpeg("../Plot/4_MiglirePeggiore.jpg", width = 800, height = 800)
   par(mar=c(5, 13 ,4 ,2))
-  barplot(as.matrix(max_min),
-          beside=TRUE,las=2, names.arg =names(max_min), main="Punteggio di ogni candidato", xlab="Punteggio", horiz=TRUE)
+  barplot(max_min,
+          beside=TRUE,las=2, names.arg =names(max_min), main="Punteggio di ogni candidato", xlab="Punteggio", horiz=TRUE, col=rgb(0.2,0.4,0.6,0.6))
   dev.off()
   #-------------------------------------------------------------------------------------------------------------------------------------------------------
   #punteggi ottenuti da tutti i tizi
@@ -115,16 +115,17 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   
   #salva tutti i plot
   jpeg("../Plot/6_RiassuntoDati.jpg")
+  
   par(mfrow = c(3,2), mar = c(4, 7, 3, 7))
-  barplot(as.matrix(sommaColonne/numerdomande), 
-          beside=TRUE,las=2, names.arg =catefgorie, main="Risposte per ogni categoria", xlab="Punteggio", horiz=TRUE) 
+  barplot(sommaColonne/numerdomande, 
+          beside=TRUE,las=2, names.arg =catefgorie, main="Risposte per ogni categoria", xlab="Punteggio", horiz=TRUE, col=rgb(0.2,0.4,0.6,0.6)) 
   #punteggio primi 5 candidati
   output<-head(output, 5)
   barplot(output$punteggitotali,
-          beside=TRUE,las=2, names.arg =output$candidati, main="Punteggio dei primi 5 candidati", xlab="Punteggio", horiz=TRUE)
+          beside=TRUE,las=2, names.arg =output$candidati, main="Punteggio dei primi 5 candidati", xlab="Punteggio", horiz=TRUE, col=rgb(0.2,0.4,0.6,0.6))
   pie(colSums(dftot)/numerdomande, labels = catefgorie, main="Media punteggi")
-  barplot(as.matrix(max_min),
-          beside=TRUE,las=2, names.arg =names(max_min), main="Punteggio di ogni candidato", xlab="Punteggio", horiz=TRUE)
+  barplot(max_min,
+          beside=TRUE,las=2, names.arg =names(max_min), main="Punteggio di ogni candidato", xlab="Punteggio", horiz=TRUE, col=rgb(0.2,0.4,0.6,0.6))
   plot(totPunteggi,y, main = "Distribuzione Normale")
   
   dev.off()
