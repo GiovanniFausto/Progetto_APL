@@ -26,7 +26,7 @@ class Block:
     #serve a calcolare hash
     def calcoloHash(self):    
         block = json.dumps(self.__dict__, sort_keys=True) #__dict__ contiene tutti gli attributi di block
-        hashBlock = sha256(block.encode()).hexdigest()
+        hashBlock = sha256(block.encode()).hexdigest() #calcola l'hash del blpcco usando sha256
         return hashBlock
     #serve per stampare tutte le info del blocco
     def stampa(self):

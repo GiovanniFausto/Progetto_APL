@@ -12,7 +12,7 @@ from pathlib import Path
 
 import sqlalchemy
 #faccio quello che serve per connettermi al db creato 
-sqlEngine       = sqlalchemy.create_engine('mysql+pymysql://root:@127.0.0.1/apl', pool_recycle=3600)
+sqlEngine       = sqlalchemy.create_engine('mysql+pymysql://root:0000@127.0.0.1/apl', pool_recycle=3600)
 dbConnection    = sqlEngine.connect()
 # creiamo delle interfacce per il nodo server.
 # usiamo Flask come framework per creare un'applicazione REST
@@ -101,17 +101,17 @@ def salvaDataframe(block):
 # serve per creare una nuova transazione in un blocco
 @app.route('/nuovaTransazione', methods=['POST'])
 def nuovaTransazione():
-    datiTransazione = request.get_json()
-    datiTransazione["timestamp"] = time.time()
+    datiTransazione = request.get_json() # richiesta in formato json
+    datiTransazione["timestamp"] = time.time() #mette il timestamp alla transaz
     blockchain.transazioniUnconfirmed.append(datiTransazione)# per aggiungere la transazione alla lista di transaz non confermate
-    return "Transazione creata con successo", 201
+    return "Transazione creata con successo", 201 
 
 #http://localhost:8000/mine ----------------------------------------------------------------------  MINE
 # per comunicare al server di estrarre un nuovo blocco
 @app.route('/mine', methods=['GET'])
 def mineTransazioniUnconfirmed():
     block = blockchain.mine() # mine delle transazioni non confermate
-    ultimoBlocco = blockchain.chain[-1]
+    ultimoBlocco = blockchain.chain[-1] #prende l'ultimo blocco appena aggiutno
     if block is False:
         return "Nessuna transazione da estrarre", 404
     #questo salva la bc
@@ -132,12 +132,10 @@ def getPending():
 # ci restituisce l’intera blockchain
 @app.route('/chain', methods=['GET'])
 def getChain():
-    chain = []
-    for block in blockchain.chain:
-        chain.append(block.__dict__)
+    chain = blockchain.getChain() # prende tutta la bc
     dimChain = len(chain)
     res = {"Lunghezza": dimChain, "Catena": chain}
-    return json.dumps(res), 200
+    return json.dumps(res), 200 #restituisce in formato json la bc
 
     
 ### manca la parte della decentralizzazione!! per inserire nuovi nodi nella rete.
