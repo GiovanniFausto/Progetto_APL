@@ -137,7 +137,15 @@ def getChain():
     res = {"Lunghezza": dimChain, "Catena": chain}
     return json.dumps(res), 200 #restituisce in formato json la bc
 
-    
+@app.route('/partecipanti', methods=['GET'])    
+def getPartecipantiTest():
+    partecipanti = []
+    for block in blockchain.chain:
+        if block.index > 0: 
+            tot = sum(block.punteggioDomande)
+            partecipanti.extend([block.infoCandidato(), tot])
+    return json.dumps(partecipanti), 200
+
 ### manca la parte della decentralizzazione!! per inserire nuovi nodi nella rete.
 if __name__ == '__main__': #----------------------------------------------------------------------------- MAIN
     print("SERVER ATTIVO")
