@@ -14,8 +14,8 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   print("E' L'ORA GIUSTA PER FARE LE STATISTICHE")
  
   
-  connessioneDB <- dbConnect(MySQL(), user="root", password="0000", host="localhost",db="apl")# serve per la connessione al db
-  
+  #connessioneDB <- dbConnect(MySQL(), user="root", password="0000", host="localhost",db="apl")# serve per la connessione al db
+  connessioneDB <- dbConnect(MySQL(), user="root", password="", host="localhost",db="apl")
   allTables <- dbListTables(connessioneDB)# mi ritorna la lista di tutte le tabelle nel db
   
   dfcandi <- dbReadTable(connessioneDB, "dfcandidato")#prendo le dataframe e tolgo la prima colonna che sono indici della tabella
