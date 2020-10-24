@@ -12,20 +12,28 @@ import util.Random
 
 object concorso {
   def main(args: Array[String]) = {
-    var path = "src/main/scala/questionario.csv" //contiene le domande e le risposte
+    val path = "src/main/scala/questionario.csv" //contiene le domande e le risposte
     //i test che voglio eseguire
-    var numTest = 1
+    var numTest = 0
     var testEseguiti = 0
     val numDom = 10
 
     print("Eseguire simulazione true\\false?")
-    var simulazione = readBoolean()
+    val simulazione = readBoolean()
     if (simulazione) {
       println("HAI SCELTO SIMULAZIONE")
       print("Quanti test vuoi eseguire?")
-      numTest = readInt()
+      while(numTest==0){
+        try {
+        numTest = readInt()
+      }catch {
+        case e: Exception => println("INSERIRE UN NUMERO VALIDO, NON SONO AMMESSI CARATTERI")
+      }
       println("Numero test che vuoi eseguire: "+ numTest)
-
+      }
+    }else{
+      println("NON E' UNA SIMULAZIONE")
+      numTest=1
     }
 
     while (testEseguiti < numTest) {

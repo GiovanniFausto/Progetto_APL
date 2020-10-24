@@ -49,19 +49,21 @@ class lettoreDomande(var path:String, var numDom:Int) {
   }
 
   private def elaboradomande(): Unit = { //serve a leggere tutte le domande nel file
+    var primaRiga=true
     for (line <- bufferedSource.getLines) {//leggo tutte le linee del file
-      if (inizio == 0) { //controllo se sono alla prima riga
+      if (primaRiga) { //controllo se sono alla prima riga
         //faccio anche il replace delle " perchè danno problemi in fase di invio delle domande nella socket
-        val cols = line.replace("\"","").split(";").map(_.trim) //quello che leggo lo mentto nelle colonne
+        //quello che leggo lo mentto nelle colonne per questo faccio la mappa, per sicurezza faccio trim che rimuove
+        //gli spazi bianchi
+        val cols = line.replace("\"","").split(";").map(_.trim)
         val l = cols.length
         for (i <- 0 until  l ) {
           key += (cols(i)->"0")   //la prima riga contiene solo le key e 0 al posto di un valore vero
         }
-        inizio = inizio + 1
+        primaRiga=false
         lista=key::lista //le aggiungo alla lista, per ora contiene solo la prima riga che ha solo info e non domande vere e proprie
       }
       else {
-        inizio = inizio + 1
         val cols = line.replace("\"","").split(";").map(_.trim) //come prima ma ora ci sono le domande
         val l = cols.length
         val s = key.keys.toSeq //prendo le key che mi servono per la mappa che sarà del tipo k->v
