@@ -1,8 +1,7 @@
 import json
 import time
-from flask import Flask, request
 from Blockchain import Blockchain
-import socket, ast
+import socket
 import requests
 
 

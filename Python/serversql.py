@@ -1,17 +1,15 @@
 import json
-import pyarrow.feather as feather
 import time
 from flask import Flask, request
 from Blockchain import Blockchain
-import csv
 import pandas as pd
 import pickle
 import os
 from os import path as P
 from collections import defaultdict
 from pathlib import Path
-
 import sqlalchemy
+
 pc=os.environ['COMPUTERNAME']
 password="" if pc=="DESKTOP-LOU6DAQ" else "0000"
 urlMysql='mysql+pymysql://root:'+password+'@127.0.0.1/apl'
@@ -44,11 +42,6 @@ if P.exists(path):
     print("bc esistente")
     with open(path, 'rb') as f:
         blockchain = pickle.load(f)   
-
-    #lenCatdom=len(blockchain.chain[1].categorieDomande)#saranno 7 
-    #lenPunt=len(blockchain.chain[1].punteggioDomande)
-    #numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
-
     lenCatdom,lenPunt,numPunDom=calcolaInfoDomande()
 
     for block in blockchain.chain:#scorro i blocchi di bc
@@ -63,7 +56,7 @@ if P.exists(path):
                 for ele in sliceDom:
                     dataframeTot[k].append(ele)
 
-            dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas per salvarle poi in feather
+            dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas
             dfcandidato = pd.DataFrame(data=dataframeCandidato)
 
     frame = dfcandidato.to_sql("dfcandidato", dbConnection,if_exists='replace')
@@ -95,7 +88,7 @@ def salvaDataframe(block):
         for ele in sliceDom:
             dataframeTot[k].append(ele)
     
-    dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas per salvarle poi in feather
+    dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas 
     dfcandidato = pd.DataFrame(data=dataframeCandidato)
 
     frame = dfcandidato.to_sql("dfcandidato", dbConnection,if_exists='replace')
