@@ -1,5 +1,5 @@
 # Progetto_APL
-Giovanni Fausto
+Giovanni Fausto -
 Alessia Rondinella
 
 ## Blockchain per test
@@ -73,8 +73,8 @@ Vengono esposti i seguenti servizi su localhost:
 Le librerie che sono state utilizzate per il progetto sono: 
 
 - Per quanto riguarda la parte di Scala quelle standard presenti già su Scala.
-- Per R abbiamo usato RMySQL che serve per la connessione al db, e lubridate che serve per fare delle operazioni con le date, per il resto abbiamo usato quelle standard di R
-- Per Python hashlib per generare gli hash per i vari blocchi della blockchian, json e flask per le operazioni tra C/S
+- Per R abbiamo usato RMySQL che serve per la connessione al db.
+- Per Python usiamo hashlib per generare gli hash dei blocchi, json, flask e request per le operazioni REST tra C/S.
 
 
 Si procede come prima cosa ad avviare il server per istanziare la blockchain
@@ -86,7 +86,10 @@ Successivamente ad avviare il client, per la ricezione socket:
 python client.py
 ```
 una volta avviati entrambi, è possibile fare partire il test in Scala:
-
+```
+scalac Concorso.scala
+scala Concorso
+```
 ## Statistiche
 ![alt text](https://github.com/GiovanniFausto/Progetto_APL/blob/master/Plot/1_MediaPunteggiCategorieDomande.jpg)
 
