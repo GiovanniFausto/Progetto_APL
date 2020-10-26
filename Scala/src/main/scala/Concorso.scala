@@ -22,15 +22,15 @@ object Concorso{
     val simulazione = readBoolean()
     if (simulazione) {
       println("HAI SCELTO SIMULAZIONE")
-      print("Quanti test vuoi eseguire?")
       while(numTest==0){
+        print("Quanti test vuoi eseguire? Non puoi inserire 0")
         try {
         numTest = readInt()
-      }catch {
-        case e: Exception => println("INSERIRE UN NUMERO VALIDO, NON SONO AMMESSI CARATTERI")
+        }catch {
+          case e: Exception => println("INSERIRE UN NUMERO VALIDO, NON SONO AMMESSI CARATTERI")
+        }
       }
       println("Numero test che vuoi eseguire: "+ numTest)
-      }
     }else{
       println("NON E' UNA SIMULAZIONE")
       numTest=1
@@ -58,8 +58,11 @@ object Concorso{
             case e: Exception => println("INSERIRE UN CODICE VALIDO, NON SONO AMMESSI CARATTERI")
           }
         }
-        nome = readLine("inserisci nome: ")
-        cognome = readLine("inserisci cognome: ")
+        while (nome.length<=1 || cognome.length<=1){
+          println("Sia nome che cognome devono avere più di un carattere")
+          nome = readLine("inserisci nome: ")
+          cognome = readLine("inserisci cognome: ")
+        }
       } else {
         codice = Random.nextInt(100000)
         nome = nomiPropri(Random.nextInt(nomiPropri.length))
