@@ -1,6 +1,5 @@
 #Load RMariaDB if it is not loaded already
 library(RMySQL)
-library(lubridate)
 
 user<-Sys.info()["user"]
 if(user=="giova"){
@@ -134,5 +133,5 @@ if(giorno>target){# controllo se sono oltre un certo orario che significa che ho
   dev.off()
   
 }else {
-  print("non è il momento giusto")
+  print("non ? il momento giusto")
 }
