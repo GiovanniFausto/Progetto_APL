@@ -10,8 +10,8 @@ import scala.io.StdIn._
 import util.Random
 
 
-object concorso {
-  def main(args: Array[String]) = {
+object Main extends App{
+  //def main(args: Array[String]) = {
     val path = "src/main/scala/questionario.csv" //contiene le domande e le risposte
     //i test che voglio eseguire
     var numTest = 0
@@ -199,6 +199,6 @@ object concorso {
 
       Thread.sleep(10000)
     }
-  }
+  //}
 }
 
