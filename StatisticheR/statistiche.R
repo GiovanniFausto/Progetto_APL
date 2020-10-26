@@ -3,18 +3,17 @@ library(RMySQL)
 library(lubridate)
 
 user<-Sys.info()["user"]
-if(user=="giova"){passwordMysql=""} else {passwordMysql="0000"}
+if(user=="giova"){
+  passwordMysql=""
+} else {passwordMysql="0000"}
 
-print(passwordMysql)
 ora<-Sys.time()#prendo il tempo corrente e poi prendo ore e minuti
-ore<-hour(ora)
-minuti<-minute(ora)
-oraCorrente<-paste(ore, minuti,sep=":")
 
-target <- "10:00"#quello da confontare 
+giorno<-day(ora)
+target <- 25#quello da confontare 
 
 
-if(oraCorrente>target){# controllo se sono oltre un certo orario che significa che ho finito i test e quindi posso fare delle statistiche
+if(giorno>target){# controllo se sono oltre un certo orario che significa che ho finito i test e quindi posso fare delle statistiche
   print("E' L'ORA GIUSTA PER FARE LE STATISTICHE")
  
   
@@ -134,5 +133,6 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
   
   dev.off()
   
-  
+}else {
+  print("non è il momento giusto")
 }
