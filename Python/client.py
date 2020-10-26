@@ -17,7 +17,7 @@ if __name__ == '__main__':
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind((HOST, PORT))
-        s.settimeout(1.0)
+        s.settimeout(5.0)
         s.listen(1)
         while 1:
             
@@ -41,15 +41,15 @@ if __name__ == '__main__':
                             transaction =requests.get(url2)
                             print("Status code GET /mine: ", transaction.status_code)
                             connesso=True
+                            #time.sleep(1)
+                            conn.send("DATI INVIATI AL SERVER\n".encode())
                         except KeyboardInterrupt:
                             print("CLIENT SPENTO")
                             break
                         except :
                             print("SERVER NON ATTIVO")
                             connesso=False
-                        
-
-                          
+                                      
             except socket.timeout: pass
             
     except KeyboardInterrupt: print("CLIENT SPENTO")

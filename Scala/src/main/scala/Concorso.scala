@@ -23,7 +23,7 @@ object Concorso{
     if (simulazione) {
       println("HAI SCELTO SIMULAZIONE")
       while(numTest==0){
-        print("Quanti test vuoi eseguire? Non puoi inserire 0")
+        print("Quanti test vuoi eseguire? Non puoi inserire 0:  ")
         try {
         numTest = readInt()
         }catch {
@@ -187,8 +187,10 @@ object Concorso{
         try {
           val s = new Socket(InetAddress.getByName("localhost"), 9999)
           val out = new PrintStream(s.getOutputStream)
+          val in = new BufferedSource(s.getInputStream).getLines()
           out.println(msg)
           out.flush()
+          println(in.next())
           s.close()
           println(s)
           connesso=true
@@ -197,7 +199,7 @@ object Concorso{
           case e: Exception => println("NON E' POSSIBILE CONNETTERSI CON LA SOCKET");connesso=false
         }
       }
-      Thread.sleep(10000)
+      //Thread.sleep(10000)
     }
   }
 }

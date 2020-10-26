@@ -37,7 +37,7 @@ dataframeCandidato=defaultdict(list)
 
 def calcolaInfoDomande():
     lenCatdom=len(blockchain.chain[1].categorieDomande)#saranno 7 
-    lenPunt=len(blockchain.chain[1].punteggioDomande)
+    lenPunt=len(blockchain.chain[1].punteggioDomande)# ci sono tutti i punteggi, quindi se ho 7 categorie e di ogniuna 10 domande avrò 70 valori
     numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
     return lenCatdom,lenPunt,numPunDom
     
@@ -63,8 +63,8 @@ if P.exists(path):
 
             dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas
             dfcandidato = pd.DataFrame(data=dataframeCandidato)
-    frame = dfcandidato.to_sql("dfcandidato", dbConnection,if_exists='replace')
-    frame = dftot.to_sql("dftot", dbConnection,if_exists='replace')
+    frame = dfcandidato.to_sql("dfcandidato", dbConnection, if_exists='replace')# la prima volta facciamo un replace, non si sa mai c'è qualche problema col db
+    frame = dftot.to_sql("dftot", dbConnection, if_exists='replace')# così abbiamo ricreato tutta la tabella e la carichiamo
     #blockchain.stampa()
 else:
     print("bc no presente")
@@ -84,19 +84,19 @@ def salvaDataframe(block):
     lenCatdom,lenPunt,numPunDom=calcolaInfoDomande()
     
     puntDom=block.punteggioDomande #è una lsita coi punteggi 
-    dataframeCandidato["candidato"].append(block.infoCandidato())
-    dataframeCandidato["domcat"].append(numPunDom)
+    dataframeCandidato["candidato"].append(block.infoCandidato())# mettiamo le info del candicato nome cognome codice
+    dataframeCandidato["domcat"].append(numPunDom)# quante domande ho per ogni categoria
     for i,k in enumerate(block.categorieDomande): #scorro le categorie 
         sliceDom=puntDom[numPunDom*i:numPunDom*i+numPunDom] #prendo uno slice che sarebbero solo le domande di quella categoria
         dataframeCandidato[k].append(sum(sliceDom)) #sommo il punteggio di quelle domande
         for ele in sliceDom:
-            dataframeTot[k].append(ele)
+            dataframeTot[k].append(ele)# qui inceve appendo i punteggi che ci sono in ogni slice, per averli tutti sulla colonna della categoria k
     
     dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas 
     dfcandidato = pd.DataFrame(data=dataframeCandidato)
-
-    frame = dfcandidato.to_sql("dfcandidato", dbConnection,if_exists='replace')
-    frame = dftot.to_sql("dftot", dbConnection,if_exists='replace')
+    
+    frame = dfcandidato.tail(1).to_sql("dfcandidato", dbConnection,if_exists='append')# devo aggiungere solo l'ultimo
+    frame = dftot.tail(numPunDom).to_sql("dftot", dbConnection,if_exists='append')# devo aggingere le ultime domande 
 
 #creiamo gli endpoint
 
