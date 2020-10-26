@@ -2,6 +2,10 @@
 library(RMySQL)
 library(lubridate)
 
+user<-Sys.info()["user"]
+if(user=="giova"){passwordMysql=""} else {passwordMysql="0000"}
+
+print(passwordMysql)
 ora<-Sys.time()#prendo il tempo corrente e poi prendo ore e minuti
 ore<-hour(ora)
 minuti<-minute(ora)
@@ -15,7 +19,7 @@ if(oraCorrente>target){# controllo se sono oltre un certo orario che significa c
  
   
   #connessioneDB <- dbConnect(MySQL(), user="root", password="0000", host="localhost",db="apl")# serve per la connessione al db
-  connessioneDB <- dbConnect(MySQL(), user="root", password="", host="localhost",db="apl")
+  connessioneDB <- dbConnect(MySQL(), user="root", password=passwordMysql, host="localhost",db="apl")
   allTables <- dbListTables(connessioneDB)# mi ritorna la lista di tutte le tabelle nel db
   
   dfcandi <- dbReadTable(connessioneDB, "dfcandidato")#prendo le dataframe e tolgo la prima colonna che sono indici della tabella
