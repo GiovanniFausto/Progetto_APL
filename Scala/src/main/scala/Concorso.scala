@@ -58,7 +58,6 @@ object Concorso{
             case e: Exception => println("INSERIRE UN CODICE VALIDO, NON SONO AMMESSI CARATTERI")
           }
         }
-
         nome = readLine("inserisci nome: ")
         cognome = readLine("inserisci cognome: ")
       } else {
@@ -84,26 +83,25 @@ object Concorso{
       //scelgo nome e cognome random per semplicita di simulazione di un test
       val (nome, cognome, codice) = generaNomeCognome() //  readLine("inserisci nome: ")
       println("Ecco i tuoi dati: "+ nome+" "+cognome+" "+codice)
-      for (i <- lista.indices) { //serve per scorrere tra le domande
-        //in pratica dalla lista(i) ottengo un ogetto che ha id,cat,dom, e 4 risposte
+      for(elemento<-lista){ //serve per scorrere tra le domande
+        //in pratica dalla elemento ottengo un ogetto che ha id,cat,dom, e 4 risposte
         //in pratica risp contiene le 4 possibili risposte, 1 ovviamente è quella giusta, è di tipo key value
         var risp = LinkedHashMap[String, String]() //metto le risposte quando poi faccio lo shuffle, ci saranno 4 risposte
         var risposta = -1 //metto il numero della risposta
-        val h = lista(i).toList.head._2.toInt //serve pre prendere id della domanda
-
+        val h = elemento.toList.head._2.toInt //serve pre prendere id della domanda
         IdDomande = h :: IdDomande //per prendere id
         //prendo solo le risposte e le mischio perchè se no la prima è sempre quella giusta
-        var keys = lista(i).keys.drop(3) // mi servono solo le risposte quindi elimino i primi 3 che sono id,cat,dom
+        var keys = elemento.keys.drop(3) // mi servono solo le risposte quindi elimino i primi 3 che sono id,cat,dom
         keys = shuffle(keys) //faccio uno shuffle per mischiare le risposte altrimenti la prima è sempre quella giusta
 
         for (k <- keys) { //scorro le varie key che sono quelle delle risposte
-          risp += k -> lista(i)(k) //numeroRisposta->risposta
+          risp += k -> elemento(k) //numeroRisposta->risposta
         }
-        DomandeUscite = lista(i)("Domanda") :: DomandeUscite //metto le domande che escono
-        CategorieDomande = lista(i)("Categoria") :: CategorieDomande
+        DomandeUscite = elemento("Domanda") :: DomandeUscite //metto le domande che escono
+        CategorieDomande = elemento("Categoria") :: CategorieDomande
         println("-" * 150)
-        println("CATEGORIA:\t" + lista(i)("Categoria"))
-        println("DOMANDA:\t" + lista(i)("Domanda"))
+        println("CATEGORIA:\t" + elemento("Categoria"))
+        println("DOMANDA:\t" + elemento("Domanda"))
 
         //facendo così le risposte saranno stampate random perchè ho fatto lo shuffle delle key
         for (j <- 0 until keys.size) {
@@ -117,23 +115,23 @@ object Concorso{
             //metto random una risposta
             risposta = if (simulazione) Random.nextInt(5) + 1 else readInt() //così ho dei random tra 1 e 5  //1 //readInt()
             //risposta = readInt()//Random.nextInt(6)//1 //readInt()
-            println(risposta)
+            //println(risposta)
             if (risposta < 5) { // ho due casi quando è giusta e quando è sbagliata
               val scelta = keys.toList(risposta - 1)
-              RisposteSelezionate = lista(i)(scelta) :: RisposteSelezionate //metto la risposta che ho scelto nella lista
+              RisposteSelezionate = elemento(scelta) :: RisposteSelezionate //metto la risposta che ho scelto nella lista
               if (scelta equals ("Risposta_Corretta")) { //risposta-1 perchè gli indici partono da 0
                 //entro qua se ho dato la risposta *****CORRETTA*****
                 PunteggioDomande = 1 :: PunteggioDomande
               } else { //qua ho la risposta *****SBAGLAITA*****
                 //PunteggioDomande = -0.25 :: PunteggioDomande
                 val punti=if (simulazione) 0  else -0.25
-                println(punti)
+                //println(punti)
                 PunteggioDomande = punti :: PunteggioDomande
               }
             } else if (risposta == 5) { //qua mi sono *****ASTENUTO*****
               //PunteggioDomande = 0 :: PunteggioDomande
               val punti=if (simulazione) 0.25  else 0
-              println(punti)
+              //println(punti)
               PunteggioDomande = punti :: PunteggioDomande
               RisposteSelezionate = "NON LA SO" :: RisposteSelezionate
             }
@@ -196,7 +194,6 @@ object Concorso{
           case e: Exception => println("NON E' POSSIBILE CONNETTERSI CON LA SOCKET");connesso=false
         }
       }
-
       Thread.sleep(10000)
     }
   }
