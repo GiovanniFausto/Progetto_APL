@@ -17,7 +17,11 @@ print(urlMysql)
 #faccio quello che serve per connettermi al db creato 
 #sqlEngine       = sqlalchemy.create_engine('mysql+pymysql://root:0000@127.0.0.1/apl', pool_recycle=3600)
 sqlEngine       = sqlalchemy.create_engine(urlMysql, pool_recycle=3600)
+dbConnection = sqlEngine.execute("CREATE DATABASE IF NOT EXISTS apl;") #create db
+dbConnection = sqlEngine.execute("USE apl;") # select new db
 dbConnection    = sqlEngine.connect()
+
+
 # creiamo delle interfacce per il nodo server.
 # usiamo Flask come framework per creare un'applicazione REST
 

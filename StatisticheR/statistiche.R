@@ -1,5 +1,6 @@
 #Load RMariaDB if it is not loaded already
 library(RMySQL)
+library(lubridate)
 
 user<-Sys.info()["user"]
 if(user=="giova"){
