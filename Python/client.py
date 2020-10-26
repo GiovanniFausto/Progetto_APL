@@ -30,7 +30,6 @@ if __name__ == '__main__':
                     #print("-"*150)
                     res = json.loads(datiRicevuti) # trasforma in dizionario
                     json_str = json.dumps(res) #trasforma in json
-                    print("sono qua")
                     #POST nuovaTransazione, mette la transazione nella lista transazioni non confermate
                     connesso=False
                     while connesso==False:

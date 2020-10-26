@@ -12,13 +12,13 @@ import sqlalchemy
 
 pc=os.environ['COMPUTERNAME']
 password="" if pc=="DESKTOP-LOU6DAQ" else "0000"
-urlMysql='mysql+pymysql://root:'+password+'@127.0.0.1/apl'
-print(urlMysql)
+urlMysql='mysql+pymysql://root:'+password+'@127.0.0.1'
+nomedb="apl"
 #faccio quello che serve per connettermi al db creato 
-#sqlEngine       = sqlalchemy.create_engine('mysql+pymysql://root:0000@127.0.0.1/apl', pool_recycle=3600)
-sqlEngine       = sqlalchemy.create_engine(urlMysql, pool_recycle=3600)
-dbConnection = sqlEngine.execute("CREATE DATABASE IF NOT EXISTS apl;") #create db
-dbConnection = sqlEngine.execute("USE apl;") # select new db
+sqlEngine       = sqlalchemy.create_engine(urlMysql) 
+dbConnection = sqlEngine.execute("CREATE DATABASE IF NOT EXISTS "+nomedb) #create db
+sqlEngine       = sqlalchemy.create_engine(urlMysql+"/"+nomedb)
+#dbConnection = sqlEngine.execute("USE apl;") # select new db
 dbConnection    = sqlEngine.connect()
 
 
@@ -46,6 +46,7 @@ if P.exists(path):
     print("bc esistente")
     with open(path, 'rb') as f:
         blockchain = pickle.load(f)   
+    
     lenCatdom,lenPunt,numPunDom=calcolaInfoDomande()
 
     for block in blockchain.chain:#scorro i blocchi di bc
@@ -62,7 +63,6 @@ if P.exists(path):
 
             dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas
             dfcandidato = pd.DataFrame(data=dataframeCandidato)
-
     frame = dfcandidato.to_sql("dfcandidato", dbConnection,if_exists='replace')
     frame = dftot.to_sql("dftot", dbConnection,if_exists='replace')
     #blockchain.stampa()
