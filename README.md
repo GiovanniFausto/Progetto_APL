@@ -22,8 +22,8 @@ In entrambe le modalità, si procede inserendo nome, cognome e codice del partec
 
 Le risposte vengono valutate utilizzando il seguente criterio:
   - +1 per ogni risposta corretta;
-  - 0 per ogni risposta errata;
-  - +0.25 se non viene fornita una risposta;
+  - 0 per ogni risposta errata in fase di simulazione, altrimenti -0.25;
+  - +0.25 se non viene fornita una risposta in fase di simulazione, altrimeti 0;
 
 Alla fine del test, i dati del partecipante ed il test, comprensivo delle domande uscite e punteggi ottenuti per ogni domanda, vengono
 inviati al client py utilizzando le Socket.
