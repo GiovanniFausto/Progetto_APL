@@ -122,15 +122,19 @@ object concorso {
               val scelta = keys.toList(risposta - 1)
               RisposteSelezionate = lista(i)(scelta) :: RisposteSelezionate //metto la risposta che ho scelto nella lista
               if (scelta equals ("Risposta_Corretta")) { //risposta-1 perchè gli indici partono da 0
-                //entro qua se ho dato la risposta corretta
+                //entro qua se ho dato la risposta *****CORRETTA*****
                 PunteggioDomande = 1 :: PunteggioDomande
-              } else { //qua ho la risposta sbagliata
+              } else { //qua ho la risposta *****SBAGLAITA*****
                 //PunteggioDomande = -0.25 :: PunteggioDomande
-                PunteggioDomande = 0 :: PunteggioDomande
+                val punti=if (simulazione) 0  else -0.25
+                println(punti)
+                PunteggioDomande = punti :: PunteggioDomande
               }
-            } else if (risposta == 5) { //qua mi sono astenuto e prendo 0
+            } else if (risposta == 5) { //qua mi sono *****ASTENUTO*****
               //PunteggioDomande = 0 :: PunteggioDomande
-              PunteggioDomande = 0.25 :: PunteggioDomande
+              val punti=if (simulazione) 0.25  else 0
+              println(punti)
+              PunteggioDomande = punti :: PunteggioDomande
               RisposteSelezionate = "NON LA SO" :: RisposteSelezionate
             }
           } catch {
@@ -177,11 +181,22 @@ object concorso {
     }
 
     def inviaDati(msg: String): Unit = {
-      val s = new Socket(InetAddress.getByName("localhost"), 9999)
-      val out = new PrintStream(s.getOutputStream)
-      out.println(msg)
-      out.flush()
-      s.close()
+      var connesso=false
+      while(!connesso) {//provo fino a quando non mi connetto
+        try {
+          val s = new Socket(InetAddress.getByName("localhost"), 9999)
+          val out = new PrintStream(s.getOutputStream)
+          out.println(msg)
+          out.flush()
+          s.close()
+          println(s)
+          connesso=true
+        }
+        catch {
+          case e: Exception => println("NON E' POSSIBILE CONNETTERSI CON LA SOCKET");connesso=false
+        }
+      }
+
       Thread.sleep(10000)
     }
   }

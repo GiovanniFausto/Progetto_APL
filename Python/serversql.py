@@ -6,14 +6,19 @@ from Blockchain import Blockchain
 import csv
 import pandas as pd
 import pickle
+import os
 from os import path as P
 from collections import defaultdict
 from pathlib import Path
 
 import sqlalchemy
+pc=os.environ['COMPUTERNAME']
+password="" if pc=="DESKTOP-LOU6DAQ" else "0000"
+urlMysql='mysql+pymysql://root:'+password+'@127.0.0.1/apl'
+print(urlMysql)
 #faccio quello che serve per connettermi al db creato 
 #sqlEngine       = sqlalchemy.create_engine('mysql+pymysql://root:0000@127.0.0.1/apl', pool_recycle=3600)
-sqlEngine       = sqlalchemy.create_engine('mysql+pymysql://root:@127.0.0.1/apl', pool_recycle=3600)
+sqlEngine       = sqlalchemy.create_engine(urlMysql, pool_recycle=3600)
 dbConnection    = sqlEngine.connect()
 # creiamo delle interfacce per il nodo server.
 # usiamo Flask come framework per creare un'applicazione REST

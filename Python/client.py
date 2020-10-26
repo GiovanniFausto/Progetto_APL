@@ -31,14 +31,26 @@ if __name__ == '__main__':
                     #print("-"*150)
                     res = json.loads(datiRicevuti) # trasforma in dizionario
                     json_str = json.dumps(res) #trasforma in json
-
+                    print("sono qua")
                     #POST nuovaTransazione, mette la transazione nella lista transazioni non confermate
-                    datiTransazione = requests.post(url, data=json_str, headers=headers)
-                    print("Status code POST /nuovaTransazione: ", datiTransazione.status_code)
+                    connesso=False
+                    while connesso==False:
+                        try:
+                            datiTransazione = requests.post(url, data=json_str, headers=headers)
+                            print("Status code POST /nuovaTransazione: ", datiTransazione.status_code)
 
-                    #GET mine, estrae le transazioni non confermate
-                    transaction =requests.get(url2)
-                    print("Status code GET /mine: ", transaction.status_code)
+                            #GET mine, estrae le transazioni non confermate
+                            transaction =requests.get(url2)
+                            print("Status code GET /mine: ", transaction.status_code)
+                            connesso=True
+                        except KeyboardInterrupt:
+                            print("CLIENT SPENTO")
+                            break
+                        except :
+                            print("SERVER NON ATTIVO")
+                            connesso=False
+                        
+
                           
             except socket.timeout: pass
             
