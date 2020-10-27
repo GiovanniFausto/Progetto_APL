@@ -70,26 +70,34 @@ Vengono esposti i seguenti servizi su localhost:
 
 ## Running Project
 
+Per prima cosa fare il clone del repository e aprire la cartella principale.
+
 Le librerie che sono state utilizzate per il progetto sono: 
 
 - Per quanto riguarda la parte di Scala quelle standard presenti già su Scala.
 - Per R abbiamo usato RMySQL che serve per la connessione al db.
 - Per Python usiamo hashlib per generare gli hash dei blocchi, json, flask e request per le operazioni REST tra C/S.
 
+Prima di procedere con il run dei vari moduli serve avviare un server anche locale, per praticità abbiamo usato Xampp per questo scopo.
 
-Si procede come prima cosa ad avviare il server per istanziare la blockchain
+Si procede come prima cosa ad avviare il server per istanziare la blockchain:
 ```
-python serversql.py
+python Python/serversql.py
 ```
 Successivamente ad avviare il client, per la ricezione socket:
 ```
-python client.py
+python Python/client.py
 ```
-una volta avviati entrambi, è possibile fare partire il test in Scala:
+Una volta avviati entrambi, è possibile fare partire il test in Scala:
 ```
 scalac Concorso.scala
 scala Concorso
 ```
+Una volta fatti questi passaggi è possibile avviare R se si volgiono effettuare delle statistiche sui test col comando:
+```
+Rscript StatisticheR/statistiche.R
+```
+
 ## Statistiche
 ![alt text](https://github.com/GiovanniFausto/Progetto_APL/blob/master/Plot/1_MediaPunteggiCategorieDomande.jpg)
 
