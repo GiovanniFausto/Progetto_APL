@@ -82,20 +82,20 @@ Prima di procedere con il run dei vari moduli serve avviare un server anche loca
 
 Si procede come prima cosa ad avviare il server per istanziare la blockchain:
 ```
-python Python/serversql.py
+cd Python
+python serversql.py
 ```
 Successivamente ad avviare il client, per la ricezione socket:
 ```
-python Python/client.py
+cd Python
+python client.py
 ```
-Una volta avviati entrambi, è possibile fare partire il test in Scala:
-```
-scalac Concorso.scala
-scala Concorso
-```
+Una volta avviati entrambi, è possibile fare partire il test in Scala, andando nella cartella Scala e aprendo sbt shell e lanciando il comando run.
+
 Una volta fatti questi passaggi è possibile avviare R se si volgiono effettuare delle statistiche sui test col comando:
 ```
-Rscript StatisticheR/statistiche.R
+cd StatisticheR
+Rscript statistiche.R
 ```
 
 ## Statistiche
