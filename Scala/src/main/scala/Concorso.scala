@@ -11,38 +11,39 @@ import util.Random
 
 
 object Concorso{
-  def main(args: Array[String]) = {
-    val path = "src/main/scala/questionario.csv" //contiene le domande e le risposte
-    //i test che voglio eseguire
-    var numTest = 0
-    var testEseguiti = 0
-    val numDom = 10
+    def main(args: Array[String]) = {
+      val path = "src/main/scala/questionario.csv" //contiene le domande e le risposte
+      //i test che voglio eseguire
+      var numTest = 0
+      var testEseguiti = 0
+      val numDom = 10
 
-    print("Eseguire simulazione true\\false?")
-    val simulazione = readBoolean()
-    if (simulazione) {
-      println("HAI SCELTO SIMULAZIONE")
-      while(numTest==0){
-        print("Quanti test vuoi eseguire? Non puoi inserire 0:  ")
-        try {
-        numTest = readInt()
-        }catch {
-          case e: Exception => println("INSERIRE UN NUMERO VALIDO, NON SONO AMMESSI CARATTERI")
+      print("Eseguire simulazione true\\false?")
+      val simulazione = readBoolean()
+      if (simulazione) {
+        println("HAI SCELTO SIMULAZIONE")
+        while (numTest == 0) {
+          print("Quanti test vuoi eseguire? Non puoi inserire 0:  ")
+          try {
+            numTest = readInt()
+          } catch {
+            case e: Exception => println("INSERIRE UN NUMERO VALIDO, NON SONO AMMESSI CARATTERI")
+          }
         }
+        println("Numero test che vuoi eseguire: " + numTest)
+      } else {
+        println("NON E' UNA SIMULAZIONE")
+        numTest = 1
       }
-      println("Numero test che vuoi eseguire: "+ numTest)
-    }else{
-      println("NON E' UNA SIMULAZIONE")
-      numTest=1
-    }
 
-    while (testEseguiti < numTest) {
-      esecuzioneTest(numDom)
-      testEseguiti = testEseguiti + 1
+      while (testEseguiti < numTest) {
+        esecuzioneTest(numDom,simulazione,path)
+        testEseguiti = testEseguiti + 1
+      }
     }
 
     //mi genera il nome e il cognome
-    def generaNomeCognome(): (String, String, String) = {
+    def generaNomeCognome(simulazione:Boolean): (String, String, String) = {
       val nomiPropri = Array("Agostino", "Alberto", "Alessandro", "Alessio", "Alfio", "Alfonso", "Amedeo", "Angelo", "Antonio", "Aurelio", "Corrado", "Cosimo")
       val cognomiPropri = Array("Rossi", "Ferrari", "Russo", "Bianchi", "Romano", "Gallo", "Costa", "Fontana", "Gialli", "Verdi")
       var codice = 0
@@ -71,8 +72,7 @@ object Concorso{
       (nome, cognome, codice.toString)
     }
 
-
-    def esecuzioneTest(numDom: Int): Unit = {
+    def esecuzioneTest(numDom: Int,simulazione:Boolean,path:String): Unit = {
       //creo il lettore domande che mi ritorna una lista con delle domande random a cui devo rispodenre
       val obj = new lettoreDomande(path = path, numDom) // il numero è per devidere quante domande per ogni categoria
       val lista = obj.listaDom
@@ -84,7 +84,7 @@ object Concorso{
       var CategorieDomande = List[String]() //lo uso per le categorie
 
       //scelgo nome e cognome random per semplicita di simulazione di un test
-      val (nome, cognome, codice) = generaNomeCognome() //  readLine("inserisci nome: ")
+      val (nome, cognome, codice) = generaNomeCognome(simulazione) //  readLine("inserisci nome: ")
       println("Ecco i tuoi dati: "+ nome+" "+cognome+" "+codice)
       for(elemento<-lista){ //serve per scorrere tra le domande
         //in pratica dalla elemento ottengo un ogetto che ha id,cat,dom, e 4 risposte
@@ -116,8 +116,7 @@ object Concorso{
           try {
             println("Inserisci una risposta tra 1 e 5: \t")
             //metto random una risposta
-            risposta = if (simulazione) Random.nextInt(5) + 1 else readInt() //così ho dei random tra 1 e 5  //1 //readInt()
-            //risposta = readInt()//Random.nextInt(6)//1 //readInt()
+            risposta = if (simulazione) Random.nextInt(5) + 1 else readInt() //così ho dei random tra 1 e 5
             //println(risposta)
             if (risposta < 5) { // ho due casi quando è giusta e quando è sbagliata
               val scelta = keys.toList(risposta - 1)
@@ -157,15 +156,10 @@ object Concorso{
       println("PUNTEGGIO TOTALE:\t" + PunteggioDomande.sum)
       println("CATEGORIE DOMANDE:\t" + CategorieDomande)
       generaDati(nome, cognome, codice, IdDomande, PunteggioDomande, RisposteSelezionate, DomandeUscite, CategorieDomande)
-
     }
 
-    def generaDati(nome: String, cognome: String, codice: String,
-                   IdDomande: List[Int],
-                   PunteggioDomande: List[Double],
-                   RisposteSelezionate: List[String],
-                   DomandeUscite: List[String],
-                   CategorieDomande: List[String]): Unit = {
+    def generaDati(nome: String, cognome: String, codice: String,IdDomande: List[Int],PunteggioDomande: List[Double],
+                   RisposteSelezionate: List[String],DomandeUscite: List[String],CategorieDomande: List[String]): Unit = {
 
       val msg = "{" +
         "\"Nome\": \"" + nome + "\", " +
@@ -180,7 +174,6 @@ object Concorso{
       println(msg)
       inviaDati(msg)
     }
-
     def inviaDati(msg: String): Unit = {
       var connesso=false
       while(!connesso) {//provo fino a quando non mi connetto
@@ -201,6 +194,5 @@ object Concorso{
       }
       //Thread.sleep(10000)
     }
-  }
 }
 
