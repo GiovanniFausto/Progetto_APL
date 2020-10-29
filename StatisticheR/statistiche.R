@@ -1,19 +1,18 @@
 #Load RMariaDB if it is not loaded already
 library(RMySQL)
-library(lubridate)
+#library(lubridate)
 
 user<-Sys.info()["user"]
 if(user=="giova"){
   passwordMysql=""
 } else {passwordMysql="0000"}
 
-ora<-Sys.time()#prendo il tempo corrente e poi prendo ore e minuti
+#prendo il data corrente
+data<-Sys.Date()
+giornoTest<-as.Date('2020-10-10')
 
-giorno<-day(ora)
-target <- 25#quello da confontare 
 
-
-if(giorno>target){# controllo se sono oltre un certo orario che significa che ho finito i test e quindi posso fare delle statistiche
+if(data>giornoTest){# controllo se sono oltre un certo orario che significa che ho finito i test e quindi posso fare delle statistiche
   print("E' L'ORA GIUSTA PER FARE LE STATISTICHE")
  
   
