@@ -10,16 +10,22 @@ from collections import defaultdict
 from pathlib import Path
 import sqlalchemy
 
+
 pc=os.environ['COMPUTERNAME']
 password="" if pc=="DESKTOP-LOU6DAQ" else "0000"
 urlMysql='mysql+pymysql://root:'+password+'@127.0.0.1'
 nomedb="apl"
-#faccio quello che serve per connettermi al db creato 
-sqlEngine       = sqlalchemy.create_engine(urlMysql) 
-dbConnection = sqlEngine.execute("CREATE DATABASE IF NOT EXISTS "+nomedb) #create db
-sqlEngine       = sqlalchemy.create_engine(urlMysql+"/"+nomedb)
-#dbConnection = sqlEngine.execute("USE apl;") # select new db
-dbConnection    = sqlEngine.connect()
+try:
+    #faccio quello che serve per connettermi al db creato 
+    sqlEngine       = sqlalchemy.create_engine(urlMysql) 
+    dbConnection = sqlEngine.execute("CREATE DATABASE IF NOT EXISTS "+nomedb) #create db
+    sqlEngine       = sqlalchemy.create_engine(urlMysql+"/"+nomedb)
+    #dbConnection = sqlEngine.execute("USE apl;") # select new db
+    dbConnection    = sqlEngine.connect()
+#except ConnectionRefusedError:
+    #print("ERRORE CONNESSIONE DB")
+except sqlalchemy.exc.OperationalError:
+    print("ERRORE CONNESSIONE DB")
 
 
 # creiamo delle interfacce per il nodo server.
@@ -63,8 +69,12 @@ if P.exists(path):
 
             dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas
             dfcandidato = pd.DataFrame(data=dataframeCandidato)
-    frame = dfcandidato.to_sql("dfcandidato", dbConnection, if_exists='replace')# la prima volta facciamo un replace, non si sa mai c'è qualche problema col db
-    frame = dftot.to_sql("dftot", dbConnection, if_exists='replace')# così abbiamo ricreato tutta la tabella e la carichiamo
+    try:
+        frame = dfcandidato.to_sql("dfcandidato", dbConnection, if_exists='replace')# la prima volta facciamo un replace, non si sa mai c'è qualche problema col db
+        frame = dftot.to_sql("dftot", dbConnection, if_exists='replace')# così abbiamo ricreato tutta la tabella e la carichiamo
+    except NameError:
+        print("Errore connessione Database")
+
     #blockchain.stampa()
 else:
     print("bc no presente")
@@ -94,10 +104,11 @@ def salvaDataframe(block):
     
     dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas 
     dfcandidato = pd.DataFrame(data=dataframeCandidato)
-    
-    frame = dfcandidato.tail(1).to_sql("dfcandidato", dbConnection,if_exists='append')# devo aggiungere solo l'ultimo
-    frame = dftot.tail(numPunDom).to_sql("dftot", dbConnection,if_exists='append')# devo aggingere le ultime domande 
-
+    try:
+        frame = dfcandidato.tail(1).to_sql("dfcandidato", dbConnection,if_exists='append')# devo aggiungere solo l'ultimo
+        frame = dftot.tail(numPunDom).to_sql("dftot", dbConnection,if_exists='append')# devo aggingere le ultime domande 
+    except NameError:
+        print("Errore connessione Database")
 #creiamo gli endpoint
 
 #http://localhost:8000/nuovaTransazione ---------------------------------------------------------------------- NUOVA TRANSIZIONE
