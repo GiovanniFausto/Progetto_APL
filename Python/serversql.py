@@ -151,12 +151,12 @@ def getChain():
     return creaListaHtml(chain), 200 #restituisce in formato json la bc
 
 def creaListaHtml(elements):#crea una lista
-    string = "<ul>\n"
+    string = "<ul>"
     for s in elements:
         x=""
         for i in s:
-            x+=str(i)+" : "+str(s[i])+"<br>"
-        string += "<li>" + x + "</li>\n"
+            x+=str(i)+" : "+str(s[i])+"<br><br>"
+        string += "<li>" + x + "</li>"
     string += "</ul>"
     return string
 
@@ -166,8 +166,11 @@ def getPartecipantiTest():
     for block in blockchain.chain:
         if block.index > 0: 
             tot = sum(block.punteggioDomande)
-            partecipanti.extend([block.infoCandidato(), tot])
-    return json.dumps(partecipanti, indent=1), 200
+            partecipanti.append((block.infoCandidato(), tot))
+    string=""
+    for p in partecipanti:
+        string+=str(p)+"<br>"
+    return json.dumps(string, indent=1), 200
 
 @app.route('/partecipanti/<codice>', methods=['GET'])    
 def getPartecipantexTest(codice):
@@ -175,6 +178,10 @@ def getPartecipantexTest(codice):
     for block in blockchain.chain:
         if block.index > 0 and block.codice == codice: 
             partecipantex.append(block.transazioni)
+   
+    if len(partecipantex)==0: 
+        partecipantex="NESSUN PARTECIPANTE CON QUEL CODICE"
+    partecipantex=creaListaHtml(partecipantex)
     return json.dumps(partecipantex, indent=1), 200
 
 CONNECTED_NODE_ADDRESS = "http://127.0.0.1:8000"
