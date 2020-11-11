@@ -160,6 +160,14 @@ def getPartecipantiTest():
             partecipanti.extend([block.infoCandidato(), tot])
     return json.dumps(partecipanti), 200
 
+@app.route('/partecipanti/<codice>', methods=['GET'])    
+def getPartecipantexTest(codice):
+    partecipantex = []
+    for block in blockchain.chain:
+        if block.index > 0 and block.codice == codice: 
+            partecipantex.append(block.transazioni)
+    return json.dumps(partecipantex), 200
+
 ### manca la parte della decentralizzazione!! per inserire nuovi nodi nella rete.
 if __name__ == '__main__': #----------------------------------------------------------------------------- MAIN
     print("SERVER ATTIVO")

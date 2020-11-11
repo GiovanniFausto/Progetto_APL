@@ -20,6 +20,10 @@ class Blockchain:
     
     #per estrarre un nuovo blocco, dopo il blocco genesi
     def createBlock(self, block, proof):
+        #verifico che l'hashPrecedente coincide con l'hash del blocco prima
+        bloccoPrecedente = self.chain[-1]
+        if bloccoPrecedente.hash != block.hashPrecedente:
+            return False
 
         #verifico se l'hash del nuovo blocco è valido, cioè se soddisfa il vincolo di iniziare con 00
         if proof[:Blockchain.difficultyPoW] != '0' * Blockchain.difficultyPoW: 
