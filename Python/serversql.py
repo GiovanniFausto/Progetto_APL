@@ -155,7 +155,8 @@ def creaListaHtml(elements):#crea una lista
     for s in elements:
         x=""
         for i in s:
-            x+=str(i)+" : "+str(s[i])+"<br><br>"
+            if i!="transazioni":
+                x+=str(i)+" : "+str(s[i])+"<br>"
         string += "<li>" + x + "</li>"
     string += "</ul>"
     return string
@@ -167,9 +168,9 @@ def getPartecipantiTest():
         if block.index > 0: 
             tot = sum(block.punteggioDomande)
             partecipanti.append((block.infoCandidato(), tot))
-    string=""
+    string="<br>"
     for p in partecipanti:
-        string+=str(p)+"<br>"
+        string+="Partecipante : "+str(p[0])+" Totale Punteggio : "+str(p[1])+"<br>"
     return json.dumps(string, indent=1), 200
 
 @app.route('/partecipanti/<codice>', methods=['GET'])    
