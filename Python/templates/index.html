@@ -24,7 +24,10 @@
 		<input type="text" id="codice" codice="codice" placeholder="Codice Partecipante">
 		<script type="text/javascript">
 			function searchURL(){
-			window.open("{{node_address}}/partecipanti/"+document.getElementById('codice').value,"frame");
+				num1=document.getElementById('codice').value	
+				if(num1>0){
+					window.open("{{node_address}}/partecipanti/"+document.getElementById('codice').value,"frame");
+				}
 			}
 		</script>
 		

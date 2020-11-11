@@ -178,10 +178,11 @@ def getPartecipantexTest(codice):
     for block in blockchain.chain:
         if block.index > 0 and block.codice == codice: 
             partecipantex.append(block.transazioni)
-   
+    
     if len(partecipantex)==0: 
         partecipantex="NESSUN PARTECIPANTE CON QUEL CODICE"
-    partecipantex=creaListaHtml(partecipantex)
+    else: 
+        partecipantex=creaListaHtml(partecipantex)
     return json.dumps(partecipantex, indent=1), 200
 
 CONNECTED_NODE_ADDRESS = "http://127.0.0.1:8000"
