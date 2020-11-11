@@ -185,13 +185,10 @@ def getPartecipantexTest(codice):
         partecipantex=creaListaHtml(partecipantex)
     return json.dumps(partecipantex, indent=1), 200
 
-CONNECTED_NODE_ADDRESS = "http://127.0.0.1:8000"
-
 @app.route('/')
 def index():
     return render_template('index.html',
-                           title='Blockchain',
-                           node_address=CONNECTED_NODE_ADDRESS)
+                           title='Blockchain')
 
 if __name__ == '__main__': #----------------------------------------------------------------------------- MAIN
     print("SERVER ATTIVO")
