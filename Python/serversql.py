@@ -1,6 +1,6 @@
 import json
 import time
-from flask import Flask, request
+from flask import render_template, Flask, request
 from Blockchain import Blockchain
 import pandas as pd
 import pickle
@@ -9,7 +9,7 @@ from os import path as P
 from collections import defaultdict
 from pathlib import Path
 import sqlalchemy
-
+import datetime
 
 pc=os.environ['COMPUTERNAME']
 password="" if pc=="DESKTOP-LOU6DAQ" else "0000"
@@ -168,7 +168,19 @@ def getPartecipantexTest(codice):
             partecipantex.append(block.transazioni)
     return json.dumps(partecipantex), 200
 
-### manca la parte della decentralizzazione!! per inserire nuovi nodi nella rete.
+CONNECTED_NODE_ADDRESS = "http://127.0.0.1:8000"
+@app.route('/')
+def index():
+    #fetch_posts()
+    return render_template('index.html',
+                           title='Blockchain',
+                           node_address=CONNECTED_NODE_ADDRESS,
+                           readable_time=timestamp_to_string)
+
+def timestamp_to_string(epoch_time):
+    return datetime.datetime.fromtimestamp(epoch_time).strftime('%H:%M')
+
+
 if __name__ == '__main__': #----------------------------------------------------------------------------- MAIN
     print("SERVER ATTIVO")
     app.run(port=8000)
