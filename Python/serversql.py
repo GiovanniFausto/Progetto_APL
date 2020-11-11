@@ -9,7 +9,6 @@ from os import path as P
 from collections import defaultdict
 from pathlib import Path
 import sqlalchemy
-import datetime
 
 pc=os.environ['COMPUTERNAME']
 password="" if pc=="DESKTOP-LOU6DAQ" else "0000"
@@ -168,7 +167,7 @@ def getPartecipantiTest():
         if block.index > 0: 
             tot = sum(block.punteggioDomande)
             partecipanti.extend([block.infoCandidato(), tot])
-    return json.dumps(partecipanti), 200
+    return json.dumps(partecipanti, indent=1), 200
 
 @app.route('/partecipanti/<codice>', methods=['GET'])    
 def getPartecipantexTest(codice):
@@ -176,22 +175,17 @@ def getPartecipantexTest(codice):
     for block in blockchain.chain:
         if block.index > 0 and block.codice == codice: 
             partecipantex.append(block.transazioni)
-    return json.dumps(partecipantex), 200
+    return json.dumps(partecipantex, indent=1), 200
 
 CONNECTED_NODE_ADDRESS = "http://127.0.0.1:8000"
+
 @app.route('/')
 def index():
-    #fetch_posts()
     return render_template('index.html',
                            title='Blockchain',
-                           node_address=CONNECTED_NODE_ADDRESS,
-                           readable_time=timestamp_to_string)
-
-def timestamp_to_string(epoch_time):
-    return datetime.datetime.fromtimestamp(epoch_time).strftime('%H:%M')
-
+                           node_address=CONNECTED_NODE_ADDRESS)
 
 if __name__ == '__main__': #----------------------------------------------------------------------------- MAIN
     print("SERVER ATTIVO")
-    app.run(port=8000)
+    app.run(port=8000, debug=True)
     print("SERVER SPENTO")
