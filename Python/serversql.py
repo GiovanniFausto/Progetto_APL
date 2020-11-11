@@ -155,8 +155,7 @@ def creaListaHtml(elements):#crea una lista
     for s in elements:
         x=""
         for i in s:
-            if i!="transazioni":
-                x+=str(i)+" : "+str(s[i])+"<br>"
+            x+=str(i)+" : "+str(s[i])+"<br>"
         string += "<li>" + x + "</li>"
     string += "</ul>"
     return string
