@@ -149,7 +149,17 @@ def getChain():
     chain = blockchain.getChain() # prende tutta la bc
     dimChain = len(chain)
     res = {"Lunghezza": dimChain, "Catena": chain}
-    return json.dumps(res), 200 #restituisce in formato json la bc
+    return creaListaHtml(chain), 200 #restituisce in formato json la bc
+
+def creaListaHtml(elements):#crea una lista
+    string = "<ul>\n"
+    for s in elements:
+        x=""
+        for i in s:
+            x+=str(i)+" : "+str(s[i])+"<br>"
+        string += "<li>" + x + "</li>\n"
+    string += "</ul>"
+    return string
 
 @app.route('/partecipanti', methods=['GET'])    
 def getPartecipantiTest():

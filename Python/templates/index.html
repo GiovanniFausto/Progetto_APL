@@ -10,9 +10,16 @@
 
 	<div style="margin: 20px;">
 
-	<a href="{{node_address}}/chain"><button class="option-btn">Blockchain</button></a>
-	<a href="{{node_address}}/partecipanti"><button class="option-btn">Partecipanti</button></a>
-
+	<a href="{{node_address}}/chain"  target="post_box"><button class="option-btn">Blockchain</button></a>
+	<a href="{{node_address}}/partecipanti" target="_blank"><button class="option-btn">Partecipanti</button></a>
+	<input type="text" id="name" name="name"  size="10">
+	<script type="text/javascript">
+		function searchURL(){
+		  window.open("{{node_address}}/partecipanti/"+document.getElementById('name').value);
+		}
+	  </script>
+	<button class="option-btn" onclick="searchURL()" target="_blank">Seleziona Partecipante</button>
+	
     {% for post in posts %}
 
     <div class="post_box">

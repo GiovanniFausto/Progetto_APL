@@ -27,14 +27,13 @@ class lettoreDomande(var path:String, var numDom:Int) {
     var j=0
     val h=domPerCateg //serve per poi generare i numeri random e saltare da una categoria all'altra
 
-    while (j<Categ){ //lo faccio per ogni categoria
+    while (j<Categ){ //lo faccio per ogni categoria quindi 7 volte
       while (set1.size<numDom){ //genero tot numeri random perchè voglio tot dom per categoria
         var x=(Random.nextInt(h)+1+h*j) //lo faccio fino a quando ho tutti numeri diversi, anche perchè è un set
         set1+=x //i numeri sono generati prima da 1 a 100 poi 101 a 200 ecc
         //Random.nextInt(h) genera un random da 0 a 99 con +1 faccio da 1 a 100 perchè tanto la prima riga sono info
-        //+h*j serve per saltare di 100 ad ogni categoria
+        //+h*j serve per saltare di 100 ad ogni categoria è un offset
       }
-
       for (i<-0 until set1.size){ //converto il set in sequenza e con i numeri che ho nella seq prendo le domande
         val s=set1.toSeq
         val l=(lista(s(i))) //dalla lista prenderò solo le domande con gli id random che ho generato
@@ -67,7 +66,6 @@ class lettoreDomande(var path:String, var numDom:Int) {
         val cols = line.replace("\"","").split(";").map(_.trim) //come prima ma ora ci sono le domande
         val l = cols.length
         val s = key.keys.toSeq //prendo le key che mi servono per la mappa che sarà del tipo k->v
-
         for (i <- 0 until l ) { // in s ci sono le key fatte a sequenza per praticità le metto in s, in cols i valori
           dict+= (s(i) -> cols(i)) //metto nella mappa,come sopra ma ora ci sono valori veri e propri
         }
