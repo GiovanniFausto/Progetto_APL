@@ -14,28 +14,15 @@ pc=os.environ['COMPUTERNAME']
 password="" if pc=="DESKTOP-LOU6DAQ" else "0000"
 urlMysql='mysql+pymysql://root:'+password+'@127.0.0.1'
 nomedb="apl"
-try:
-    #faccio quello che serve per connettermi al db creato 
-    sqlEngine       = sqlalchemy.create_engine(urlMysql) 
-    dbConnection = sqlEngine.execute("CREATE DATABASE IF NOT EXISTS "+nomedb) #create db
-    sqlEngine       = sqlalchemy.create_engine(urlMysql+"/"+nomedb)
-    #dbConnection = sqlEngine.execute("USE apl;") # select new db
-    dbConnection    = sqlEngine.connect()
-#except ConnectionRefusedError:
-    #print("ERRORE CONNESSIONE DB")
-except sqlalchemy.exc.OperationalError:
-    print("ERRORE CONNESSIONE DB")
 
+
+#path
+path=Path("..\BC\Blockchain.pkl")
 
 # creiamo delle interfacce per il nodo server.
 # usiamo Flask come framework per creare un'applicazione REST
 
 app = Flask(__name__)
-
-#path
-path=Path("..\BC\Blockchain.pkl")
-
-
 #creo le dataframe per poi usarle in R
 dataframeTot=defaultdict(list)
 dataframeCandidato=defaultdict(list)
@@ -46,42 +33,6 @@ def calcolaInfoDomande():
     numPunDom=int(lenPunt/lenCatdom) #ho in pratica quante domande per categoria
     return lenCatdom,lenPunt,numPunDom
     
-#controllo se esiste già una bc, e in caso carico quella
-if P.exists(path):
-    print("bc esistente")
-    with open(path, 'rb') as f:
-        blockchain = pickle.load(f)   
-    
-    lenCatdom,lenPunt,numPunDom=calcolaInfoDomande()
-
-    for block in blockchain.chain:#scorro i blocchi di bc
-        if block.index==0:pass #salto il primo che non mi serve
-        else:
-            puntDom=block.punteggioDomande #è una lsita coi punteggi 
-            dataframeCandidato["candidato"].append(block.infoCandidato())
-            dataframeCandidato["domcat"].append(numPunDom)
-            for i,k in enumerate(block.categorieDomande): #scorro le categorie 
-                sliceDom=puntDom[numPunDom*i:numPunDom*i+numPunDom] #prendo uno slice che sarebbero solo le domande di quella categoria
-                dataframeCandidato[k].append(sum(sliceDom)) #sommo il punteggio di quelle domande
-                for ele in sliceDom:
-                    dataframeTot[k].append(ele)
-
-            dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas
-            dfcandidato = pd.DataFrame(data=dataframeCandidato)
-    try:
-        frame = dfcandidato.to_sql("dfcandidato", dbConnection, if_exists='replace')# la prima volta facciamo un replace, non si sa mai c'è qualche problema col db
-        frame = dftot.to_sql("dftot", dbConnection, if_exists='replace')# così abbiamo ricreato tutta la tabella e la carichiamo
-    except NameError:
-        print("Errore connessione Database")
-
-    #blockchain.stampa()
-else:
-    print("bc no presente")
-    blockchain = Blockchain()
-    #blockchain.stampa()
-
-
-
 #salva la bc in un file Pickle
 def saveBCOnPickle():
     fileBC = open(path, 'wb')
@@ -191,6 +142,54 @@ def index():
                            title='Blockchain')
 
 if __name__ == '__main__': #----------------------------------------------------------------------------- MAIN
+    
+    try:
+        #faccio quello che serve per connettermi al db creato 
+        sqlEngine       = sqlalchemy.create_engine(urlMysql) 
+        dbConnection = sqlEngine.execute("CREATE DATABASE IF NOT EXISTS "+nomedb) #create db
+        sqlEngine       = sqlalchemy.create_engine(urlMysql+"/"+nomedb)
+        #dbConnection = sqlEngine.execute("USE apl;") # select new db
+        dbConnection    = sqlEngine.connect()
+        #except ConnectionRefusedError:
+        #print("ERRORE CONNESSIONE DB")
+    except sqlalchemy.exc.OperationalError:
+        print("ERRORE CONNESSIONE DB")
+
+    #controllo se esiste già una bc, e in caso carico quella
+    if P.exists(path):
+        print("bc esistente")
+        with open(path, 'rb') as f:
+            blockchain = pickle.load(f)   
+        
+        lenCatdom,lenPunt,numPunDom=calcolaInfoDomande()
+
+        for block in blockchain.chain:#scorro i blocchi di bc
+            if block.index==0:pass #salto il primo che non mi serve
+            else:
+                puntDom=block.punteggioDomande #è una lsita coi punteggi 
+                dataframeCandidato["candidato"].append(block.infoCandidato())
+                dataframeCandidato["domcat"].append(numPunDom)
+                for i,k in enumerate(block.categorieDomande): #scorro le categorie 
+                    sliceDom=puntDom[numPunDom*i:numPunDom*i+numPunDom] #prendo uno slice che sarebbero solo le domande di quella categoria
+                    dataframeCandidato[k].append(sum(sliceDom)) #sommo il punteggio di quelle domande
+                    for ele in sliceDom:
+                        dataframeTot[k].append(ele)
+
+                dftot = pd.DataFrame(data=dataframeTot) #le convero in dataframe pandas
+                dfcandidato = pd.DataFrame(data=dataframeCandidato)
+        try:
+            frame = dfcandidato.to_sql("dfcandidato", dbConnection, if_exists='replace')# la prima volta facciamo un replace, non si sa mai c'è qualche problema col db
+            frame = dftot.to_sql("dftot", dbConnection, if_exists='replace')# così abbiamo ricreato tutta la tabella e la carichiamo
+        except NameError:
+            print("Errore connessione Database")
+
+        #blockchain.stampa()
+    else:
+        print("bc no presente")
+        blockchain = Blockchain()
+        #blockchain.stampa()
+    
+
     print("SERVER ATTIVO")
     app.run(port=8000, debug=True)
     print("SERVER SPENTO")
