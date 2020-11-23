@@ -160,16 +160,16 @@ object Concorso{
 
     def generaDati(nome: String, cognome: String, codice: String,IdDomande: List[Int],PunteggioDomande: List[Double],
                    RisposteSelezionate: List[String],DomandeUscite: List[String],CategorieDomande: List[String]): Unit = {
-
+      //("[", ", ", "]") così per gli interi l'altro per le string
       val msg = "{" +
         "\"Nome\": \"" + nome + "\", " +
         "\"Cognome\": \"" + cognome + "\", " +
         "\"Codice\": \"" + codice + "\", " +
-        "\"IdDomande\": " + IdDomande.toArray.mkString("[", ", ", "]") + ", " +
-        "\"CategorieDomande\": " + CategorieDomande.toArray.mkString("[\"", "\", \"", "\"]") + ", " +
-        "\"DomandeUscite\": " + DomandeUscite.toArray.mkString("[\"", "\", \"", "\"]") + ", " +
-        "\"RisposteSelezionate\": " + RisposteSelezionate.toArray.mkString("[\"", "\", \"", "\"]") + ", " +
-        "\"PunteggioDomande\": " + PunteggioDomande.toArray.mkString("[", ", ", "]") +
+        "\"IdDomande\": " + IdDomande.mkString("[", ", ", "]") + ", " +
+        "\"CategorieDomande\": " + CategorieDomande.mkString("[\"", "\", \"", "\"]") + ", " +
+        "\"DomandeUscite\": " + DomandeUscite.mkString("[\"", "\", \"", "\"]") + ", " +
+        "\"RisposteSelezionate\": " + RisposteSelezionate.mkString("[\"", "\", \"", "\"]") + ", " +
+        "\"PunteggioDomande\": " + PunteggioDomande.mkString("[", ", ", "]") +
         "}"
       println(msg)
       inviaDati(msg)
